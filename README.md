@@ -6,7 +6,7 @@ You can creat object like this:
 
 ### step 1. create graph object:
 
-let graph = new Graph('svg'); // the 'svg' means markup in the html
+	let graph = new Graph('svg'); // the 'svg' means markup in the html
 
 ### step 2. create an svg object with a out port:
 
