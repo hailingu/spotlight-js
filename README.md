@@ -1,6 +1,6 @@
 # spotlight-js
 
-This is javascript file which can create and manipulate the svg object. The file based on d3.js
+This is a javascript file which can create and manipulate the svg object. The file is based on d3.js.
 
 You can creat object like this:
 
