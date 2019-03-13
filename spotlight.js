@@ -116,6 +116,10 @@ class Container {
 
         this.d3Inst.call(drag);
     }
+
+    style(key, value) {
+        this.d3Inst.style(key, value);
+    }
 }
 
 class Graph extends Container {
@@ -218,6 +222,46 @@ class Graph extends Container {
         element = this.context.group[id];
         if (element != null) return element;
     }
+
+    highlightShapes(element) {
+        for (let k in this.context.group) {
+            if (k === element.id) {
+                continue;
+            }
+
+            this.context.group[k].highlight();
+        }
+    }
+
+    unHighlightShapes(element) {
+        for (let k in this.context.group) {
+            if (k === element.id) {
+                continue;
+            }
+
+            this.context.group[k].unHighlight();
+        }
+    }
+
+    highlightShapesWithConstraint(element, constraint, portType) {
+        for (let k in this.context.group) {
+            if (k === element.id) {
+                continue;
+            }
+
+            this.context.group[k].highlightWitConstraint(constraint, portType);
+        }
+    }
+
+    unHighlightShapesWithConstraint(element) {
+        for (let k in this.context.group) {
+            if (k === element.id) {
+                continue;
+            }
+
+            this.context.group[k].unHighlightWithConstraint();
+        }
+    }
 }
 
 class Shape extends Container {
@@ -226,6 +270,26 @@ class Shape extends Container {
         this.markup = markup;
         this.type = SpotlightType.SHAPE;
         this.id = id;
+        this.highlighted = false;
+    }
+
+    highlight() {
+        if (this.highlighted) {
+            return;
+        }
+        this.style('stroke-dasharray', '5 3');
+        this.style('stroke', '#82B53A');
+        this.highlighted = true;
+    }
+
+    unHighlight() {
+        if (!this.highlighted) {
+            return;
+        }
+
+        this.style('stroke-dasharray', null);
+        this.style('stroke', '#BCBCBC');
+        this.highlighted = false;
     }
 }
 
@@ -246,11 +310,19 @@ class SpotlightPortType {
     static get OUT() {
         return 'out';
     }
+
+    static get CONSTRAINT_IN() {
+        return 'constraint_in';
+    }
+
+    static get CONSTRAINT_OUT() {
+        return 'constraint_out';
+    }
 }
 
 class Port {
 
-    static get IN_PORT_ATTR (){
+    static get IN_PORT_ATTR() {
         return {
             class: 'SpotlightInPort',
             'stroke': '#BCBCBC',
@@ -261,7 +333,7 @@ class Port {
         }
     }
 
-    static get OUT_PORT_ATTR () {
+    static get OUT_PORT_ATTR() {
         return {
             class: 'SpotlightOutPort',
             'stroke': '#BCBCBC',
@@ -273,6 +345,10 @@ class Port {
     }
 
     constructor(container) {
+        if (container == null) {
+            return ;
+        }
+
         this.container = container;
         this.d3Inst = null;
         this.connected = false;
@@ -290,22 +366,6 @@ class Port {
 
     setID(id) {
         this.id = id;
-    }
-
-    allowConnected(path) {
-        if (path.inPort === null && path.outPort == null) {
-            return false;
-        }
-
-        if (path.inPort === null && this.portType === SpotlightPortType.IN) {
-            return false;
-        }
-
-        if (path.outPort === null && this.portType === SpotlightPortType.OUT) {
-            return false;
-        }
-
-        return true;
     }
 
     remove() {
@@ -375,7 +435,7 @@ class Port {
                 let mouse = d3.mouse(this);
                 let elem = elementsAt(mouse[0], mouse[1], graph);
                 let inPort = null;
-                inPort = getPortFromPoint(elem, graph);
+                inPort = getInPortFromPoint(elem, graph);
                 if (inPort != null) {
                     connectTwoPort(inPort, port, path);
                     path.attr('marker-end', 'url(#arrow)');
@@ -386,6 +446,45 @@ class Port {
                         path.remove();
                     }
                 }
+                keep = false;
+                path = null;
+            });
+        }
+
+        function drawFromInToOut() {
+            d3.event.stopPropagation();
+            let graph = port.container.container;
+            let endPoint = getInPortConnectionPoint(graph, port);
+
+            let keep = true;
+            let path = new Path(graph, lineGenerator);
+
+            container.on('mousemove', function () {
+                d3.event.stopPropagation();
+                if (keep) {
+                    let startPoint = d3.mouse(this);
+                    path.update(startPoint, endPoint);
+                }
+            });
+
+            graph.on('mouseup', function () {
+                d3.event.stopPropagation();
+                let mouse = d3.mouse(this);
+                let elem = elementsAt(mouse[0], mouse[1], graph);
+                let outPort = null;
+                outPort = getOutPortFromPoint(elem, graph);
+
+                if (outPort != null) {
+                    connectTwoPort(port, outPort, path);
+                    path.attr('marker-end', 'url(#arrow)');
+                    port.hide();
+                    outPort.updateShape();
+                } else {
+                    if (path != null) {
+                        path.remove();
+                    }
+                }
+                
                 keep = false;
                 path = null;
             });
@@ -402,26 +501,203 @@ class Port {
     }
 
     show() {
+        if (this.connected) {
+            return ;
+        }
+
         this.style('stroke-opacity', 1);
         this.style('fill-opacity', 1);
     }
 
     updateShape() {
-		if (this.connected) {
-			this.style('ry', '5');
-			this.style('fill', '#808080');
-		} else {
-			this.style('ry', '7');
-			this.style('fill', '#FFFFFF');
-		}
-		this.__updateOutPortConnection();
+        if (this.connected) {
+            this.style('ry', '5');
+            this.style('fill', '#808080');
+        } else {
+            this.style('ry', '7');
+            this.style('fill', '#FFFFFF');
+        }
+        this.__updateOutPortConnection();
     }
-    
+
     __updateOutPortConnection() {
         if (this.path != null) {
             this.path.updateConnectPoint();
         }
-	}
+    }
+}
+
+class ConstraintPort extends Port {
+
+    static get DATA() {
+        return 'data';
+    }
+
+    static get MODEL() {
+        return 'model';
+    }
+
+    static get NONE() {
+        return 'none';
+    }
+
+    static get STATISTIC() {
+        return 'statisitc';
+    }
+
+    static get TRAINEDMODEL() {
+        return 'trained_model';
+    }
+
+    constructor(container) {
+        super(null);
+        this.container = container;
+        this.type = SpotlightType.PORT;
+        this.markup = 'ellipse';
+        this.resultType = null;
+        this.acceptedType = null;
+        this.container.append(this);
+        this.allowConnected = false;
+    }
+
+    addInPortConstraint(constraint) {
+        this.acceptedType = constraint;
+    }
+
+    addOutPortConstraint(constraint) {
+        this.resultType = constraint;
+    }
+
+    allowConnect() {
+        if (this.connected) {
+            return ;
+        }
+
+        this.style('ry', '5');
+        this.style('fill', 'green');
+        this.allowConnected = true;
+    }
+
+    forbidConnect() {
+        if (this.connected) {
+            return ;
+        }
+
+        this.style('ry', '5');
+        this.style('fill', 'red');
+        this.allowConnected = false;
+    }
+
+    recover() {
+        if (this.connected) {
+            return ;
+        }
+
+        this.style('ry', '7');
+        this.style('fill', '#FFFFFF');
+        this.allowConnected = false;
+
+    }
+
+    connect() {
+        let port = this;
+        let graph = this.container.container;
+        let element = this.container;
+        let constraint = null;
+        this.d3Inst.on('mousedown', function () {
+            d3.event.stopPropagation();
+            d3.event.preventDefault();
+
+            if (port.portType === SpotlightPortType.CONSTRAINT_OUT) {
+                constraint = port.resultType;
+                graph.highlightShapesWithConstraint(element, constraint, port.portType)
+                drawFromOutToIN();
+            } else {
+                constraint = port.acceptedType;
+                graph.highlightShapesWithConstraint(element, constraint, port.portType)
+                port.hide();
+                drawFromInToOut();
+            }
+        });
+
+        let lineGenerator = d3.line().x(function (d) {
+            return d[0];
+        }).y(function (d) {
+            return d[1];
+        }).curve(d3.curveBasis);
+
+        function drawFromOutToIN() {
+            let graph = port.container.container;
+            let startPoint = getOutPortConnectionPoint(graph, port);
+
+            let keep = true;
+            let path = new Path(graph, lineGenerator);
+            graph.on('mousemove', function () {
+                d3.event.stopPropagation();
+                if (keep) {
+                    let endPoint = d3.mouse(this);
+                    path.update(startPoint, endPoint);
+                }
+            });
+
+            graph.on('mouseup', function () {
+                d3.event.stopPropagation();
+                let mouse = d3.mouse(this);
+                let elem = elementsAt(mouse[0], mouse[1], graph);
+                let inPort = null;
+                inPort = getInPortFromPoint(elem, graph);
+                if (inPort != null && inPort.allowConnected) {
+                    connectTwoPort(inPort, port, path);
+                    path.attr('marker-end', 'url(#arrow)');
+                    inPort.hide();
+                    port.updateShape();
+                } else {
+                    if (path != null) {
+                        path.remove();
+                    }
+                }
+                graph.unHighlightShapesWithConstraint(element);
+                keep = false;
+                path = null;
+            });
+        }
+
+        function drawFromInToOut() {
+            let graph = port.container.container;
+            let endPoint = getInPortConnectionPoint(graph, port);
+            let keep = true;
+            let path = new Path(graph, lineGenerator);
+            path.attr('marker-end', 'url(#arrow)');
+            graph.on('mousemove', function () {
+                d3.event.stopPropagation();
+                if (keep) {
+                    let startPoint = d3.mouse(this);
+                    path.update(startPoint, endPoint);
+                }
+            });
+
+            graph.on('mouseup', function () {
+                d3.event.stopPropagation();
+                let mouse = d3.mouse(this);
+                let elem = elementsAt(mouse[0], mouse[1], graph);
+                let outPort = null;
+                outPort = getOutPortFromPoint(elem, graph);
+                if (outPort != null && outPort.allowConnected) {
+                    connectTwoPort(port, outPort, path);
+                    outPort.updateShape();
+                } else {
+                    if (path != null) {
+                        path.remove();
+                    }
+                    port.show();
+                }
+                graph.unHighlightShapesWithConstraint(element);
+                keep = false;
+                path = null;
+            });
+        }
+    }
+
 }
 
 class Path {
@@ -540,6 +816,8 @@ class SpotlightBasicTextContainer extends Group {
         this.body = null;
         this.textBody = null;
         this.text = null;
+        this.selected = false;
+        this.highlighted = false;
     }
 
     composeGroup() {
@@ -547,12 +825,12 @@ class SpotlightBasicTextContainer extends Group {
             return;
         }
 
-        this.container.registElement(this);
         this.body = new Shape(this, 'rect', this.id + "_body");
         this.textBody = new Shape(this, 'text', this.id + "_text");
+        this.text = new Shape(this.textBody, 'tspan', this.textBody.id + "_tspan");
+        this.container.registElement(this);
         this.registElement(this.body);
         this.registElement(this.textBody);
-        this.text = new Shape(this.textBody, 'tspan', this.textBody.id + "_tspan");
         this.textBody.registElement(this.text);
         return true;
     }
@@ -594,7 +872,7 @@ class SpotlightBasicTextContainer extends Group {
         port.attr('id', port.id);
         port.setJsonAttr(Port.IN_PORT_ATTR);
         port.connect();
-        this.registElement(port);
+        port.register();
         this.__registPort(port);
         this.__updatePort();
     }
@@ -606,10 +884,37 @@ class SpotlightBasicTextContainer extends Group {
         port.attr('id', port.id);
         port.setJsonAttr(Port.OUT_PORT_ATTR);
         port.connect();
-        this.registElement(port);
+        port.register();
         this.__registPort(port);
         this.__updatePort();
     }
+
+    addConstraintOutPort(constraint) {
+        let port = new ConstraintPort(this);
+        port.setPortType(SpotlightPortType.CONSTRAINT_OUT);
+        port.setID(this.id + "_OUT_CONSTRAINT_" + Object.keys(this.outPorts).length);
+        port.attr('id', port.id);
+        port.setJsonAttr(Port.OUT_PORT_ATTR);
+        port.addOutPortConstraint(constraint);
+        port.connect();
+        port.register();
+        this.__registPort(port);
+        this.__updatePort();
+    }
+
+    addConstraintInPort(constraint) {
+        let port = new ConstraintPort(this);
+        port.setPortType(SpotlightPortType.CONSTRAINT_IN);
+        port.setID(this.id + "_IN_CONSTRAINT_" + Object.keys(this.inPorts).length);
+        port.attr('id', port.id);
+        port.setJsonAttr(Port.IN_PORT_ATTR);
+        port.addInPortConstraint(constraint);
+        port.connect();
+        port.register();
+        this.__registPort(port);
+        this.__updatePort();
+    }
+
 
     __updatePort() {
         let split = Object.keys(this.inPorts).length;
@@ -629,10 +934,76 @@ class SpotlightBasicTextContainer extends Group {
         }
     }
 
+
+    highlight() {
+        if (this.highlighted) {
+            return;
+        }
+
+        this.body.highlight();
+        this.highlighted = true;
+    }
+
+    unHighlight() {
+        if (!this.highlighted) {
+            return;
+        }
+        this.body.unHighlight();
+        this.highlighted = false;
+    }
+
+    highlightWitConstraint(constraint, portType) {
+        let cantHighlight = true;
+        if (portType === SpotlightPortType.CONSTRAINT_OUT) {
+            for (let key in this.inPorts) {
+                let port = this.inPorts[key];
+                cantHighlight = cantHighlight && port.connected;
+                if (port.portType === SpotlightPortType.CONSTRAINT_IN && !port.connected) {
+                    if (port.acceptedType === constraint) {
+                        port.allowConnect();
+                    } else {
+                        port.forbidConnect();
+                    }
+                }
+            }
+        } else if (portType === SpotlightPortType.CONSTRAINT_IN) {
+            for (let key in this.outPorts) {
+                let port = this.outPorts[key];
+                cantHighlight = cantHighlight && port.connected;
+                if (port.portType === SpotlightPortType.CONSTRAINT_OUT && !port.connected) {
+                    if (port.resultType === constraint) {
+                        port.allowConnect();
+                    } else {
+                        port.forbidConnect();
+                    }
+                }
+            }
+        }
+        if (!cantHighlight) {
+            this.highlight();
+        }
+    }
+
+    unHighlightWithConstraint() {
+        this.unHighlight();
+        for (let key in this.inPorts) {
+            if (this.inPorts[key].portType === SpotlightPortType.CONSTRAINT_IN) {
+                this.inPorts[key].recover();
+            }
+        }
+
+        for (let key in this.outPorts) {
+            if (this.outPorts[key].portType === SpotlightPortType.CONSTRAINT_OUT) {
+                this.outPorts[key].recover();
+            }
+        }
+    }
+
+
     __registPort(port) {
-        if (port.portType === SpotlightPortType.IN) {
+        if (port.portType === SpotlightPortType.IN || port.portType === SpotlightPortType.CONSTRAINT_IN) {
             this.inPorts[port.id] = port;
-        } else if (port.portType === SpotlightPortType.OUT) {
+        } else if (port.portType === SpotlightPortType.OUT || port.portType === SpotlightPortType.CONSTRAINT_OUT) {
             this.outPorts[port.id] = port;
         }
     }
@@ -656,7 +1027,7 @@ class SpotlightBasicTextContainer extends Group {
             let x = d3.event.x;
             let y = d3.event.y;
             current.attr("transform", "translate(" + (x - mousePosition[0]) + "," + (y - mousePosition[1]) + ")");
-
+            
             for (let i in current.inPorts) {
                 let path = current.inPorts[i].path;
                 if (path != null) {
@@ -670,7 +1041,6 @@ class SpotlightBasicTextContainer extends Group {
                     path.updateConnectPoint();
                 }
             }
-
         }).on('end', function () {
             mousePosition = null;
         });
@@ -731,11 +1101,27 @@ let elementsAt = function (x, y, container) {
     return elements;
 }
 
-let getPortFromPoint = function (elem, graph) {
+let getInPortFromPoint = function (elem, graph) {
     let element = null;
     for (let i in elem) {
         element = graph.getElementByID(elem[i].id);
-        if (element != null && element.type === SpotlightType.PORT && element.portType === SpotlightPortType.IN) {
+        if (element != null && 
+            element.type === SpotlightType.PORT && 
+            (element.portType === SpotlightPortType.IN || element.portType === SpotlightPortType.CONSTRAINT_IN)) {
+            break;
+        }
+    }
+
+    return element;
+}
+
+let getOutPortFromPoint = function (elem, graph) {
+    let element = null;
+    for (let i in elem) {
+        element = graph.getElementByID(elem[i].id);
+        if (element != null && 
+            element.type === SpotlightType.PORT && 
+            (element.portType === SpotlightPortType.OUT || element.portType === SpotlightPortType.CONSTRAINT_OUT)) {
             break;
         }
     }
@@ -744,6 +1130,10 @@ let getPortFromPoint = function (elem, graph) {
 }
 
 let connectTwoPort = function (inPort, outPort, path) {
+    if (inPort.path != null && outPort.path != null) {
+        return;
+    }
+
     inPort.path = path;
     outPort.path = path;
     path.inPort = inPort;
@@ -755,6 +1145,5 @@ let connectTwoPort = function (inPort, outPort, path) {
     let startPoint = getOutPortConnectionPoint(container, outPort);
     let endPoint = getInPortConnectionPoint(container, inPort);
     path.attr('d', path.lineGenerator(connectLineGeneratorHelp(startPoint, endPoint)));
-    
-}
 
+}
