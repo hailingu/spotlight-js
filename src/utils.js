@@ -130,7 +130,7 @@ let getBubbleFirstShapeID = function (elem) {
     return elem.id;
 }
 
-const utils = Object.assign(
+const Utils = Object.assign(
     {},
     {
         getOutPortConnectionPoint,
@@ -148,4 +148,4 @@ const utils = Object.assign(
     }
 )
 
-export default utils;
+export default Utils;

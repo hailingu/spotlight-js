@@ -1,5 +1,5 @@
 import SpotlightType from './spotlight_type';
-import d3 from './module_helper';
+import * as d3 from 'd3';
 
 export default class Graph {
     constructor(tag) {
@@ -23,8 +23,20 @@ export default class Graph {
             return null;
         }
 
-        this.d3Inst.append(element.markup);
         this.registElement(element);
+        return this.d3Inst.append(element.markup);
+    }
+
+    remove(element) {
+        if (!this.__legaledElement(element)) {
+            return false;
+        }
+
+        if (!this.elementExist(element)) {
+            return false;
+        }
+
+        element.remove();
     }
     
     elementExist(element) {

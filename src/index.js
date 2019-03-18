@@ -1,8 +1,11 @@
 import Graph from './graph.js';
-import {Rect} from './shapes.js'
+import {Rect} from './shape.js'
 
 let graph = new Graph('svg');
-let rec = new Rect(graph);
-rec.setID('abc');
-rec.init();
+let rect = new Rect(graph);
+rect.setID('abc');
+rect.init();
+rect.setJsonAttr(Rect.DEFAULT_ATTR);
+rect.drag();
 console.log(graph);
+console.log(rect);
