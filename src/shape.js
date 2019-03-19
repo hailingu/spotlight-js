@@ -1,22 +1,23 @@
-import SpotlightType from './spotlight_type';
+import SpotlightType from './spotlight_type.js';
+import Utils from './utils.js';
 import * as d3 from 'd3';
 
-class Shape {
+export class Shape {
     constructor(graph) {
         this.graph = graph;
         this.type = SpotlightType.SHAPE;
         this.d3Inst = null;
-        this.id = null;
+        this.id = Utils.randomID();
         this.markup = null;
     }
 
     init() {
-        if (this.graph === null) {
-            return ;
+        if (this.graph == null) {
+            return false;
         }
         
         this.d3Inst = this.graph.append(this);
-        this.drag();
+        this.attr('id', this.id);
     }
 
     remove() {
@@ -51,40 +52,52 @@ class Shape {
         this.d3Inst.call(drag);
     }
 
-    setID(id) {
-        this.id = id;
-        return this;
-    }
-
     setJsonAttr(jsonAttr) {
         for (let k in jsonAttr) {
             this.attr(k, jsonAttr[k]);
         }
     }
-}
 
-class Rect extends Shape {
-
-    static get DEFAULT_ATTR () {
-        return {
-            width: 281,
-            height: 51,
-            transform: 'translate(1,1)',
-            fill: 'red'
-        };
+    node() {
+        return this.d3Inst.node();
     }
 
+    append(subElement) {
+        if (!Utils.legaledElement(subElement)) {
+            return false;
+        }
+        subElement.d3Inst = this.d3Inst.append(subElement.markup);
+        return subElement.d3Inst;
+    }
+}
+
+export class Rect extends Shape {
     constructor(graph) {
         super(graph);
         this.markup = 'rect';
     }
 }
 
-class Ellipse extends Shape {
+export class Ellipse extends Shape {
     constructor(graph) {
         super(graph);
         this.markup = 'ellipse';
     }
 }
 
-export {Shape, Rect, Ellipse};
+export class SubShape extends Shape {
+    constructor(containerShape, markup) {
+        super(null);
+        this.markup = markup;
+        this.containerShape = containerShape;
+    }
+
+    init () {
+        if (this.containerShape == null) {
+            return false;
+        }
+
+        this.d3Inst = this.containerShape.append(this);
+        this.attr('id', this.id);
+    }
+}

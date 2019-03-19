@@ -1,0 +1,55 @@
+.ExampleGroup {
+	stroke-width: 1;
+    fill: none;
+    transform: 'translate(20,20)';
+}
+
+.DefaultRect {
+    width: 281px;
+    height: 51px;
+    fill:#FFFFFF;
+    stroke: #BCBCBC;
+    x: 0;
+    y: 0;
+    rx: 10;
+    stroke-linejoin: round;
+}
+
+.DefaultTextBody {
+	font-family: Helvetica;
+	font-size: 15;
+	font-weight: normal;
+	fill: #000000;
+}
+
+.DefaultTextSpan {
+    x: 84;
+    y: 31;
+}
+
+g rect:hover {
+	stroke-width: 3;
+	stroke: #808080;
+}
+
+.DefaultInPort {
+    stroke: #BCBCBC;
+    fill: #FFFFFF;
+    cx: 140;
+    cy: 0;
+    ry: 7;
+}
+
+.DefaultOutPort {
+    stroke: #BCBCBC;
+    fill: #FFFFFF;
+    cx: 140;
+    cy: 51;
+    ry: 7;
+}
+
+.DefaultPath {
+    stroke: #808080;
+    stroke-width: 1px;
+    fill: none;
+}

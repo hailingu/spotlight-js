@@ -18,4 +18,4 @@ export default class SpotlightType {
     static get GROUP() {
         return 'group'
     }
-}
+} 

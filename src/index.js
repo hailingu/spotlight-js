@@ -1,11 +1,13 @@
 import Graph from './graph.js';
-import {Rect} from './shape.js'
+import {ExampleGroup} from './group.js';
+import './css/spotlight.css';
+import * as d3 from 'd3';
 
 let graph = new Graph('svg');
-let rect = new Rect(graph);
-rect.setID('abc');
-rect.init();
-rect.setJsonAttr(Rect.DEFAULT_ATTR);
-rect.drag();
+let example = new ExampleGroup(graph);
+example.init();
+example.addInPort();
+example.addOutPort();
+example.drag();
 console.log(graph);
-console.log(rect);
+console.log(example);

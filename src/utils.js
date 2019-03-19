@@ -1,30 +1,72 @@
-let getOutPortConnectionPoint = function (container, port) {
-    port = port.d3Inst;
-    if (port.empty()) return null;
-    let portCoord = port.node().getBoundingClientRect();
-    portCoord.x = (portCoord.left + portCoord.right) / 2;
-    portCoord.y = portCoord.bottom;
-    portCoord = coordinateTransform(container, portCoord);
-    return [portCoord.x, portCoord.y];
-}
+import * as d3 from 'd3';
+import { Port } from './port.js';
+import SpotlightType from './spotlight_type.js';
 
-let getInPortConnectionPoint = function (container, port) {
-    let c = port.container;
-    port = port.d3Inst;
-    if (port.empty()) return null;
-    let portCoord = port.node().getBoundingClientRect();
-    portCoord.x = (portCoord.left + portCoord.right) / 2;
-    portCoord.y = c.body.d3Inst.node().getBoundingClientRect().y;
-    portCoord = coordinateTransform(container, portCoord);
-    return [portCoord.x, portCoord.y];
-}
-
-let coordinateTransform = function (container, coord) {
-    let CTM = container.d3Inst.node().getScreenCTM();
+let coordinateTransform = function (graph, coord) {
+    let CTM = graph.node().getScreenCTM();
     return {
         x: (coord.x - CTM.e) / CTM.a,
         y: (coord.y - CTM.f) / CTM.d
     }
+}
+
+let defautlLineGenerator = d3.line().x(function (d) {
+    return d[0];
+}).y(function (d) {
+    return d[1];
+}).curve(d3.curveBasis);
+
+let elementsAt = function (x, y, graph) {
+    let elements = [];
+    let xBias = parseInt(graph.d3Inst.style('left'));
+    let yBias = parseInt(graph.d3Inst.style('top'));
+
+    if (!isNaN(xBias)) {
+        x = x + xBias;
+    }
+
+    if (!isNaN(yBias)) {
+        y = y + yBias;
+    }
+
+    let current = document.elementFromPoint(x, y);
+    while (current && current.nearestViewportElement) {
+        elements.push(current);
+        current.style.display = "none";
+        current = document.elementFromPoint(x, y);
+    }
+    elements.forEach(function (elem) {
+        elem.style.display = '';
+    });
+    return elements;
+}
+
+let getOutPortFromPoint = function (elem, graph) {
+    let element = null;
+    for (let i in elem) {
+        element = graph.getElementByID(elem[i].id);
+        if (element != null &&
+            element.type === SpotlightType.PORT &&
+            (element.portType === Port.OUT || element.portType === Port.CONSTRAINT_OUT)) {
+            break;
+        }
+    }
+
+    return element;
+}
+
+let getInPortFromPoint = function (elem, graph) {
+    let element = null;
+    for (let i in elem) {
+        element = graph.getElementByID(elem[i].id);
+        if (element != null && 
+            element.type === SpotlightType.PORT && 
+            (element.portType === Port.IN || element.portType === Port.CONSTRAINT_IN)) {
+            break;
+        }
+    }
+
+    return element;
 }
 
 let connectLineGeneratorHelp = function (startPoint, endPoint) {
@@ -34,53 +76,9 @@ let connectLineGeneratorHelp = function (startPoint, endPoint) {
     return [startPoint, middlePoint1, middlePoint2, endPoint];
 }
 
-let elementsAt = function (x, y, container) {
-    let elements = [];
-    x = x + parseInt(container.d3Inst.style('left'));
-    y = y + parseInt(container.d3Inst.style('top'));
-    let current = document.elementFromPoint(x, y);
-    while (current && current.nearestViewportElement) {
-        elements.push(current);
-        current.style.display = "none";
-        current = document.elementFromPoint(x, y);
-    }
-    elements.forEach(function (elm) {
-        elm.style.display = '';
-    });
-    return elements;
-}
-
-let getInPortFromPoint = function (elem, graph) {
-    let element = null;
-    for (let i in elem) {
-        element = graph.getElementByID(elem[i].id);
-        if (element != null &&
-            element.type === SpotlightType.PORT &&
-            (element.portType === SpotlightPortType.IN || element.portType === SpotlightPortType.CONSTRAINT_IN)) {
-            break;
-        }
-    }
-
-    return element;
-}
-
-let getOutPortFromPoint = function (elem, graph) {
-    let element = null;
-    for (let i in elem) {
-        element = graph.getElementByID(elem[i].id);
-        if (element != null &&
-            element.type === SpotlightType.PORT &&
-            (element.portType === SpotlightPortType.OUT || element.portType === SpotlightPortType.CONSTRAINT_OUT)) {
-            break;
-        }
-    }
-
-    return element;
-}
-
 let connectTwoPort = function (inPort, outPort, path) {
-    if (inPort.path != null && outPort.path != null) {
-        return;
+    if (!inPort.allowConnected() || !outPort.allowConnected()) {
+        return false;
     }
 
     inPort.path = path;
@@ -90,61 +88,34 @@ let connectTwoPort = function (inPort, outPort, path) {
     inPort.connected = true;
     outPort.connected = true;
 
-    let container = path.graph;
-    let startPoint = getOutPortConnectionPoint(container, outPort);
-    let endPoint = getInPortConnectionPoint(container, inPort);
-    path.attr('d', path.lineGenerator(connectLineGeneratorHelp(startPoint, endPoint)));
-
+    path.update();
+    return true;
 }
 
-let sleep = function (ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
+let legaledElement = function(element) {
+    return element != null && element.id != null && (
+        element.type === SpotlightType.SHAPE ||
+        element.type === SpotlightType.PATH ||
+        element.type === SpotlightType.PORT ||
+        element.type === SpotlightType.GROUP);
 }
 
-let move2Point = function (svg, x, y) {
-    svg.attr('transform', 'translate(' + x + ',' + y + ')');
-}
-
-let getGroupFromPoint = function (elem, graph) {
-    let element = null;
-    let id = null;
-    for (let i in elem) {
-        id = getBubbleFirstShapeID(elem[i]);
-        if (id != null) {
-            break;
-        }
-    }
-
-    return graph.getElementByID(id);
-}
-
-let getBubbleFirstShapeID = function (elem) {
-    if (elem == null) {
-        return null;
-    }
-
-    if (elem.id == null || elem.id === '') {
-        return getBubbleFirstShapeID(elem.parentNode);
-    }
-
-    return elem.id;
+let randomID = function() {
+    return (Math.random()*10000000).toString(16).substr(0,4)+'-'+(new Date()).getTime()+'-'+Math.random().toString().substr(2,5);
 }
 
 const Utils = Object.assign(
     {},
     {
-        getOutPortConnectionPoint,
-        getInPortConnectionPoint,
         coordinateTransform,
-        connectLineGeneratorHelp,
-        elementsAt,
-        getInPortFromPoint,
         getOutPortFromPoint,
         connectTwoPort,
-        sleep,
-        move2Point,
-        getGroupFromPoint,
-        getBubbleFirstShapeID,
+        defautlLineGenerator,
+        connectLineGeneratorHelp,
+        elementsAt,
+        legaledElement,
+        randomID,
+        getInPortFromPoint
     }
 )
 

@@ -1,4 +1,5 @@
-import SpotlightType from './spotlight_type';
+import SpotlightType from './spotlight_type.js';
+import Utils from './utils.js';
 import * as d3 from 'd3';
 
 export default class Graph {
@@ -14,8 +15,20 @@ export default class Graph {
         this.type = SpotlightType.GRAPH;
     }
 
+    on(event, func) {
+        return this.d3Inst.on(event, func);
+    }
+
+    node() {
+        return this.d3Inst.node();
+    }
+
+    style(key, value) {
+        return this.d3Inst.style(key, value);
+    }
+
     append(element) {
-        if (!this.__legaledElement(element)) {
+        if (!Utils.legaledElement(element)) {
             return null;
         }
 
@@ -24,11 +37,12 @@ export default class Graph {
         }
 
         this.registElement(element);
-        return this.d3Inst.append(element.markup);
+        element.d3Inst = this.d3Inst.append(element.markup);
+        return element.d3Inst;
     }
 
     remove(element) {
-        if (!this.__legaledElement(element)) {
+        if (!Utils.legaledElement(element)) {
             return false;
         }
 
@@ -40,7 +54,7 @@ export default class Graph {
     }
     
     elementExist(element) {
-        if (!this.__legaledElement(element)) {
+        if (!Utils.legaledElement(element)) {
             return false;
         }
 
@@ -111,14 +125,6 @@ export default class Graph {
 
         element = this.context.group[id];
         if (element != null) return element;
-    }
-
-    __legaledElement(element) {
-        return element != null && element.id != null && (
-            element.type === SpotlightType.SHAPE ||
-            element.type === SpotlightType.PATH ||
-            element.type === SpotlightType.PORT ||
-            element.type === SpotlightType.GROUP);
     }
 
     __allowRegist(element) {
