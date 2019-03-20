@@ -56,10 +56,6 @@ let connectLineGeneratorHelp = function (startPoint, endPoint) {
 }
 
 let connectTwoPort = function (inPort, outPort, path) {
-    if (!inPort.allowConnected() || !outPort.allowConnected()) {
-        return false;
-    }
-
     inPort.path = path;
     outPort.path = path;
     path.inPort = inPort;

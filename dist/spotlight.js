@@ -29771,7 +29771,6 @@ function (_Group) {
       }
 
       var pos = parseInt(this.body.d3Inst.style('width')) / (split + 1);
-      console.log(pos);
       var i = 1;
 
       for (var key in this.inPorts) {
@@ -30056,7 +30055,7 @@ function () {
   }, {
     key: "allowConnected",
     value: function allowConnected() {
-      return this.connected === false;
+      return this.connected == false;
     }
   }, {
     key: "attr",
@@ -30132,7 +30131,7 @@ function (_Port) {
           var elems = _utils_js__WEBPACK_IMPORTED_MODULE_1__["default"].elementsAt(mousePos.x, mousePos.y);
           var outPort = _utils_js__WEBPACK_IMPORTED_MODULE_1__["default"].getOutPortFromPoint(elems, graph);
 
-          if (outPort != null && outPort.allowConnected()) {
+          if (outPort != null && outPort.allowConnected() && inPort.allowConnected()) {
             _utils_js__WEBPACK_IMPORTED_MODULE_1__["default"].connectTwoPort(inPort, outPort, path);
             path.addMarkerEnd();
             inPort.hide();
@@ -30140,8 +30139,9 @@ function (_Port) {
           } else {
             if (path != null) {
               path.remove();
-              inPort.show();
             }
+
+            inPort.show();
           }
 
           keep = null;
@@ -30205,7 +30205,7 @@ function (_Port2) {
           var elems = _utils_js__WEBPACK_IMPORTED_MODULE_1__["default"].elementsAt(mousePos.x, mousePos.y);
           var inPort = _utils_js__WEBPACK_IMPORTED_MODULE_1__["default"].getInPortFromPoint(elems, graph);
 
-          if (inPort != null && inPort.allowConnected()) {
+          if (inPort != null && inPort.allowConnected() && outPort.allowConnected()) {
             _utils_js__WEBPACK_IMPORTED_MODULE_1__["default"].connectTwoPort(inPort, outPort, path);
             path.addMarkerEnd();
             inPort.hide();
@@ -30612,10 +30612,6 @@ var connectLineGeneratorHelp = function connectLineGeneratorHelp(startPoint, end
 };
 
 var connectTwoPort = function connectTwoPort(inPort, outPort, path) {
-  if (!inPort.allowConnected() || !outPort.allowConnected()) {
-    return false;
-  }
-
   inPort.path = path;
   outPort.path = path;
   path.inPort = inPort;

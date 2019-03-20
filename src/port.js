@@ -56,7 +56,7 @@ export class Port {
     }
 
     allowConnected() {
-        return this.connected === false;
+        return this.connected == false;
     }
 
     attr(key, value) {
@@ -115,7 +115,7 @@ export class InPort extends Port {
 
                 let elems = Utils.elementsAt(mousePos.x, mousePos.y);
                 let outPort = Utils.getOutPortFromPoint(elems, graph);
-                if (outPort != null && outPort.allowConnected()) {
+                if (outPort != null && outPort.allowConnected() && inPort.allowConnected()) {
                     Utils.connectTwoPort(inPort, outPort, path);
                     path.addMarkerEnd();
                     inPort.hide();
@@ -123,8 +123,8 @@ export class InPort extends Port {
                 } else {
                     if (path != null) {
                         path.remove();
-                        inPort.show();
                     }
+                    inPort.show();
                 }
 
                 keep = null;
@@ -176,7 +176,7 @@ export class OutPort extends Port {
                 let elems = Utils.elementsAt(mousePos.x, mousePos.y);
                 let inPort = Utils.getInPortFromPoint(elems, graph);
 
-                if (inPort != null && inPort.allowConnected()) {
+                if (inPort != null && inPort.allowConnected() && outPort.allowConnected()) {
                     Utils.connectTwoPort(inPort, outPort, path);
                     path.addMarkerEnd();
                     inPort.hide();
