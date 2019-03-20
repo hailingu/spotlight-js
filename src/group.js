@@ -102,6 +102,11 @@ export class ExampleGroup extends Group {
 
     __updatePort() {
         let split = Object.keys(this.inPorts).length;
+
+        if (split == 1) {
+            return ;
+        }
+
         let pos = this.body.d3Inst.attr('width') / (split + 1);
         let i = 1;
         for (let key in this.inPorts) {
