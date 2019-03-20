@@ -29714,6 +29714,8 @@ function (_Group) {
       port.attr('class', 'DefaultInPort');
 
       this.__registPort(port);
+
+      this.__updatePort();
     }
   }, {
     key: "addOutPort",
@@ -29723,6 +29725,8 @@ function (_Group) {
       port.attr('class', 'DefaultOutPort');
 
       this.__registPort(port);
+
+      this.__updatePort();
     }
   }, {
     key: "drag",
@@ -29756,6 +29760,28 @@ function (_Group) {
         mousePos = null;
       });
       this.d3Inst.call(drag);
+    }
+  }, {
+    key: "__updatePort",
+    value: function __updatePort() {
+      var split = Object.keys(this.inPorts).length;
+      var pos = this.body.d3Inst.attr('width') / (split + 1);
+      var i = 1;
+
+      for (var key in this.inPorts) {
+        this.inPorts[key].style('cx', pos * i);
+        i = i + 1;
+      }
+
+      split = Object.keys(this.outPorts).length;
+      pos = this.body.d3Inst.attr('width') / (split + 1);
+      i = 1;
+
+      for (var _key in this.outPorts) {
+        this.outPorts[_key].style('cx', pos * i);
+
+        i = i + 1;
+      }
     }
   }, {
     key: "__registPort",
@@ -30216,13 +30242,14 @@ var ConstraintInPort =
 function (_InPort) {
   _inherits(ConstraintInPort, _InPort);
 
-  function ConstraintInPort(group) {
+  function ConstraintInPort(group, constraint) {
     var _this3;
 
     _classCallCheck(this, ConstraintInPort);
 
     _this3 = _possibleConstructorReturn(this, _getPrototypeOf(ConstraintInPort).call(this, group));
     _this3.portType = Port.CONSTRAINT_IN;
+    _this3.constraint = constraint;
     return _this3;
   }
 

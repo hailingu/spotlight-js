@@ -56,6 +56,7 @@ export class ExampleGroup extends Group {
         port.init();
         port.attr('class', 'DefaultInPort');
         this.__registPort(port);
+        this.__updatePort();
     }
 
     addOutPort() {
@@ -63,6 +64,7 @@ export class ExampleGroup extends Group {
         port.init();
         port.attr('class', 'DefaultOutPort');
         this.__registPort(port);
+        this.__updatePort();
     }
 
     drag() {
@@ -96,6 +98,24 @@ export class ExampleGroup extends Group {
         });
 
         this.d3Inst.call(drag);
+    }
+
+    __updatePort() {
+        let split = Object.keys(this.inPorts).length;
+        let pos = this.body.d3Inst.attr('width') / (split + 1);
+        let i = 1;
+        for (let key in this.inPorts) {
+            this.inPorts[key].style('cx', pos * i);
+            i = i + 1;
+        }
+
+        split = Object.keys(this.outPorts).length;
+        pos = this.body.d3Inst.attr('width') / (split + 1);
+        i = 1;
+        for (let key in this.outPorts) {
+            this.outPorts[key].style('cx', pos * i);
+            i = i + 1;
+        }
     }
 
     __registPort(port) {

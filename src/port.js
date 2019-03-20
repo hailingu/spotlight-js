@@ -208,9 +208,10 @@ export class OutPort extends Port {
 }
 
 export class ConstraintInPort extends InPort {
-    constructor(group) {
+    constructor(group, constraint) {
         super(group);
         this.portType = Port.CONSTRAINT_IN;
+        this.constraint = constraint;
     }
 
     connect() {
