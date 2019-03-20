@@ -35,21 +35,32 @@ g rect:hover {
 .DefaultInPort {
     stroke: #BCBCBC;
     fill: #FFFFFF;
-    cx: 140;
+    cx: 140.5;
     cy: 0;
-    ry: 7;
+    r: 7;
 }
 
 .DefaultOutPort {
     stroke: #BCBCBC;
     fill: #FFFFFF;
-    cx: 140;
+    cx: 140.5;
     cy: 51;
-    ry: 7;
+    r: 7;
 }
 
 .DefaultPath {
     stroke: #808080;
     stroke-width: 1px;
     fill: none;
+}
+
+.DefaultArrow {
+    markerWidth: 14px;
+    markerheight: 14px;
+    markerUnits: strokeWidth;
+    viewBox: 0 0 14 14;
+    refX: 2;
+    refY: 7;
+    orient: auto;
+    fill: #808080;
 }

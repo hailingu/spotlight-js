@@ -26,7 +26,7 @@ export class Port {
         this.portType = null;
         this.d3Inst = null;
         this.markup = null;
-        this.markup = 'ellipse';
+        this.markup = 'circle';
         this.id = Utils.randomID();
         this.path = null;
         this.connected = false;
@@ -66,6 +66,18 @@ export class Port {
     style(key, value) {
         return this.d3Inst.style(key, value);
     }
+
+    hide() {
+        this.style('stroke-opacity', 0);
+        this.style('fill-opacity', 0);
+    }
+
+    show() {
+        this.style('stroke-opacity', 1);
+        this.style('fill-opacity', 1);
+    }
+
+    update() {}
 }
 
 export class InPort extends Port {
@@ -76,7 +88,7 @@ export class InPort extends Port {
 
     connect() {
         let inPort = this;
-        this.d3Inst.on('mousedown', function() {
+        this.d3Inst.on('mousedown', function () {
             d3.event.stopPropagation();
             let graph = inPort.group.graph;
             let endPoint = inPort.getConnectPoint();
@@ -91,7 +103,7 @@ export class InPort extends Port {
                     path.updateConnectPoint(startPoint, endPoint);
                 }
             });
-    
+
             graph.on('mouseup', function () {
                 d3.event.stopPropagation();
                 let mousePos = d3.mouse(this);
@@ -99,12 +111,15 @@ export class InPort extends Port {
                 let outPort = Utils.getOutPortFromPoint(elem, graph);
                 if (outPort != null && outPort.allowConnected()) {
                     Utils.connectTwoPort(inPort, outPort, path);
+                    path.addMarkerEnd();
+                    inPort.hide();
+                    outPort.update();
                 } else {
                     if (path != null) {
                         path.remove();
                     }
                 }
-    
+
                 keep = null;
                 path = null;
             });
@@ -128,7 +143,7 @@ export class OutPort extends Port {
 
     connect() {
         let outPort = this;
-        this.d3Inst.on('mousedown', function() {
+        this.d3Inst.on('mousedown', function () {
             d3.event.stopPropagation();
             let graph = outPort.group.graph;
             let startPoint = outPort.getConnectPoint();
@@ -143,20 +158,28 @@ export class OutPort extends Port {
                     path.updateConnectPoint(startPoint, endPoint);
                 }
             });
-    
+
             graph.on('mouseup', function () {
                 d3.event.stopPropagation();
-                let mousePos = d3.mouse(this);
-                let elem = Utils.elementsAt(mousePos[0], mousePos[1], graph);
-                let inPort = Utils.getInPortFromPoint(elem, graph);
+                let mousePos = {
+                    x: d3.event.x,
+                    y: d3.event.y
+                };
+
+                let elems = Utils.elementsAt(mousePos.x, mousePos.y);
+                let inPort = Utils.getInPortFromPoint(elems, graph);
+
                 if (inPort != null && inPort.allowConnected()) {
                     Utils.connectTwoPort(inPort, outPort, path);
+                    path.addMarkerEnd();
+                    inPort.hide();
+                    outPort.update();
                 } else {
                     if (path != null) {
                         path.remove();
                     }
                 }
-    
+
                 keep = null;
                 path = null;
             });
@@ -169,6 +192,18 @@ export class OutPort extends Port {
         portCoord.y = portCoord.bottom;
         let temp = Utils.coordinateTransform(this.group.graph, portCoord);
         return [temp.x, temp.y];
+    }
+
+    update() {
+        this.style('r', '5');
+        this.style('fill', '#808080');
+        this.__updateOutPortConnection();
+    }
+
+    __updateOutPortConnection() {
+        if (this.path != null) {
+            this.path.update();
+        }
     }
 }
 

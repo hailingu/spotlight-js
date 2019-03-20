@@ -44,8 +44,12 @@ export class Path {
     }
 
     update() {
-        let startPoint = outPort.getConnectPoint();
-        let endPoint = inPort.getConnectPoint();
+        let startPoint = this.outPort.getConnectPoint();
+        let endPoint = this.inPort.getConnectPoint();
         this.updateConnectPoint(startPoint, endPoint);
+    }
+
+    addMarkerEnd() {
+        this.attr('marker-end', 'url(#arrow)');
     }
 }

@@ -95,7 +95,7 @@
 
 exports = module.exports = __webpack_require__(/*! ../../node_modules/css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js")(false);
 // Module
-exports.push([module.i, ".ExampleGroup {\n\tstroke-width: 1;\n    fill: none;\n    transform: 'translate(20,20)';\n}\n\n.DefaultRect {\n    width: 281px;\n    height: 51px;\n    fill:#FFFFFF;\n    stroke: #BCBCBC;\n    x: 0;\n    y: 0;\n    rx: 10;\n    stroke-linejoin: round;\n}\n\n.DefaultTextBody {\n\tfont-family: Helvetica;\n\tfont-size: 15;\n\tfont-weight: normal;\n\tfill: #000000;\n}\n\n.DefaultTextSpan {\n    x: 84;\n    y: 31;\n}\n\ng rect:hover {\n\tstroke-width: 3;\n\tstroke: #808080;\n}\n\n.DefaultInPort {\n    stroke: #BCBCBC;\n    fill: #FFFFFF;\n    cx: 140;\n    cy: 0;\n    ry: 7;\n}\n\n.DefaultOutPort {\n    stroke: #BCBCBC;\n    fill: #FFFFFF;\n    cx: 140;\n    cy: 51;\n    ry: 7;\n}\n\n.DefaultPath {\n    stroke: #808080;\n    stroke-width: 1px;\n    fill: none;\n}", ""]);
+exports.push([module.i, ".ExampleGroup {\n\tstroke-width: 1;\n    fill: none;\n    transform: 'translate(20,20)';\n}\n\n.DefaultRect {\n    width: 281px;\n    height: 51px;\n    fill:#FFFFFF;\n    stroke: #BCBCBC;\n    x: 0;\n    y: 0;\n    rx: 10;\n    stroke-linejoin: round;\n}\n\n.DefaultTextBody {\n\tfont-family: Helvetica;\n\tfont-size: 15;\n\tfont-weight: normal;\n\tfill: #000000;\n}\n\n.DefaultTextSpan {\n    x: 84;\n    y: 31;\n}\n\ng rect:hover {\n\tstroke-width: 3;\n\tstroke: #808080;\n}\n\n.DefaultInPort {\n    stroke: #BCBCBC;\n    fill: #FFFFFF;\n    cx: 140.5;\n    cy: 0;\n    r: 7;\n}\n\n.DefaultOutPort {\n    stroke: #BCBCBC;\n    fill: #FFFFFF;\n    cx: 140.5;\n    cy: 51;\n    r: 7;\n}\n\n.DefaultPath {\n    stroke: #808080;\n    stroke-width: 1px;\n    fill: none;\n}\n\n.DefaultArrow {\n    markerWidth: 14px;\n    markerheight: 14px;\n    markerUnits: strokeWidth;\n    viewBox: 0 0 14 14;\n    refX: 2;\n    refY: 7;\n    orient: auto;\n    fill: #808080;\n}", ""]);
 
 
 
@@ -29331,6 +29331,74 @@ module.exports = function (css) {
 
 /***/ }),
 
+/***/ "./src/arrow.js":
+/*!**********************!*\
+  !*** ./src/arrow.js ***!
+  \**********************/
+/*! exports provided: Arrow */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Arrow", function() { return Arrow; });
+/* harmony import */ var _path_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./path.js */ "./src/path.js");
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+
+var Arrow =
+/*#__PURE__*/
+function () {
+  _createClass(Arrow, null, [{
+    key: "DEFAULT_ARROW_ATTR",
+    get: function get() {
+      return {
+        id: 'arrow',
+        markerUnits: 'strokeWidth',
+        markerWidth: 14,
+        markerHeight: 14,
+        viewBox: '0 0 14 14',
+        refX: 2,
+        refY: 7,
+        orient: 'auto',
+        fill: '#808080'
+      };
+    }
+  }]);
+
+  function Arrow(graph) {
+    _classCallCheck(this, Arrow);
+
+    this.graph = graph;
+    this.id = 'arrow';
+    this.d3Inst = this.graph.d3Inst.append('defs').append('marker');
+    this.attr('class', 'DefaultArrow');
+    this.setJsonAttr(Arrow.DEFAULT_ARROW_ATTR);
+    this.d3Inst.append('path').attr('d', 'M2,2 L8,7 L2,12 L2,2');
+  }
+
+  _createClass(Arrow, [{
+    key: "attr",
+    value: function attr(key, value) {
+      this.d3Inst.attr(key, value);
+    }
+  }, {
+    key: "setJsonAttr",
+    value: function setJsonAttr(jsonAttr) {
+      for (var k in jsonAttr) {
+        this.attr(k, jsonAttr[k]);
+      }
+    }
+  }]);
+
+  return Arrow;
+}();
+
+/***/ }),
+
 /***/ "./src/css/spotlight.css":
 /*!*******************************!*\
   !*** ./src/css/spotlight.css ***!
@@ -29644,7 +29712,8 @@ function (_Group) {
       var port = new _port_js__WEBPACK_IMPORTED_MODULE_2__["InPort"](this);
       port.init();
       port.attr('class', 'DefaultInPort');
-      this.graph.registElement(port);
+
+      this.__registPort(port);
     }
   }, {
     key: "addOutPort",
@@ -29652,7 +29721,63 @@ function (_Group) {
       var port = new _port_js__WEBPACK_IMPORTED_MODULE_2__["OutPort"](this);
       port.init();
       port.attr('class', 'DefaultOutPort');
+
+      this.__registPort(port);
+    }
+  }, {
+    key: "drag",
+    value: function drag() {
+      var mousePos = null;
+      var current = this;
+      var drag = d3__WEBPACK_IMPORTED_MODULE_3__["drag"]().on('start', function () {
+        mousePos = d3__WEBPACK_IMPORTED_MODULE_3__["mouse"](this);
+      });
+      drag.on('drag', function () {
+        var x = d3__WEBPACK_IMPORTED_MODULE_3__["event"].x;
+        var y = d3__WEBPACK_IMPORTED_MODULE_3__["event"].y;
+        current.attr("transform", "translate(" + (x - mousePos[0]) + "," + (y - mousePos[1]) + ")");
+
+        for (var i in current.inPorts) {
+          var path = current.inPorts[i].path;
+
+          if (path != null) {
+            path.update();
+          }
+        }
+
+        for (var _i in current.outPorts) {
+          var _path = current.outPorts[_i].path;
+
+          if (_path != null) {
+            _path.update();
+          }
+        }
+      }).on('end', function () {
+        mousePos = null;
+      });
+      this.d3Inst.call(drag);
+    }
+  }, {
+    key: "__registPort",
+    value: function __registPort(port) {
+      if (port.portType === _port_js__WEBPACK_IMPORTED_MODULE_2__["Port"].IN || port.portType === _port_js__WEBPACK_IMPORTED_MODULE_2__["Port"].CONSTRAINT_IN) {
+        this.inPorts[port.id] = port;
+      } else if (port.portType === _port_js__WEBPACK_IMPORTED_MODULE_2__["Port"].OUT || port.portType === _port_js__WEBPACK_IMPORTED_MODULE_2__["Port"].CONSTRAINT_OUT) {
+        this.outPorts[port.id] = port;
+      }
+
       this.graph.registElement(port);
+    }
+  }, {
+    key: "__deRegistPort",
+    value: function __deRegistPort(port) {
+      if (port.portType === _port_js__WEBPACK_IMPORTED_MODULE_2__["Port"].IN) {
+        delete this.inPorts[port.id];
+      } else if (port.portType === _port_js__WEBPACK_IMPORTED_MODULE_2__["Port"].OUT) {
+        delete this.outPorts[port.id];
+      }
+
+      this.graph.deRegistElement(port);
     }
   }]);
 
@@ -29675,6 +29800,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _css_spotlight_css__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./css/spotlight.css */ "./src/css/spotlight.css");
 /* harmony import */ var _css_spotlight_css__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_css_spotlight_css__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var d3__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! d3 */ "./node_modules/d3/index.js");
+/* harmony import */ var _arrow_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./arrow.js */ "./src/arrow.js");
+
 
 
 
@@ -29685,6 +29812,12 @@ example.init();
 example.addInPort();
 example.addOutPort();
 example.drag();
+var example2 = new _group_js__WEBPACK_IMPORTED_MODULE_1__["ExampleGroup"](graph);
+example2.init();
+example2.addInPort();
+example2.addOutPort();
+example2.drag();
+var arrow = new _arrow_js__WEBPACK_IMPORTED_MODULE_4__["Arrow"](graph);
 console.log(graph);
 console.log(example);
 
@@ -29765,9 +29898,14 @@ function () {
   }, {
     key: "update",
     value: function update() {
-      var startPoint = outPort.getConnectPoint();
-      var endPoint = inPort.getConnectPoint();
+      var startPoint = this.outPort.getConnectPoint();
+      var endPoint = this.inPort.getConnectPoint();
       this.updateConnectPoint(startPoint, endPoint);
+    }
+  }, {
+    key: "addMarkerEnd",
+    value: function addMarkerEnd() {
+      this.attr('marker-end', 'url(#arrow)');
     }
   }]);
 
@@ -29849,7 +29987,7 @@ function () {
     this.portType = null;
     this.d3Inst = null;
     this.markup = null;
-    this.markup = 'ellipse';
+    this.markup = 'circle';
     this.id = _utils_js__WEBPACK_IMPORTED_MODULE_1__["default"].randomID();
     this.path = null;
     this.connected = false;
@@ -29898,6 +30036,21 @@ function () {
     value: function style(key, value) {
       return this.d3Inst.style(key, value);
     }
+  }, {
+    key: "hide",
+    value: function hide() {
+      this.style('stroke-opacity', 0);
+      this.style('fill-opacity', 0);
+    }
+  }, {
+    key: "show",
+    value: function show() {
+      this.style('stroke-opacity', 1);
+      this.style('fill-opacity', 1);
+    }
+  }, {
+    key: "update",
+    value: function update() {}
   }]);
 
   return Port;
@@ -29944,6 +30097,9 @@ function (_Port) {
 
           if (outPort != null && outPort.allowConnected()) {
             _utils_js__WEBPACK_IMPORTED_MODULE_1__["default"].connectTwoPort(inPort, outPort, path);
+            path.addMarkerEnd();
+            inPort.hide();
+            outPort.update();
           } else {
             if (path != null) {
               path.remove();
@@ -30004,12 +30160,18 @@ function (_Port2) {
         });
         graph.on('mouseup', function () {
           d3__WEBPACK_IMPORTED_MODULE_3__["event"].stopPropagation();
-          var mousePos = d3__WEBPACK_IMPORTED_MODULE_3__["mouse"](this);
-          var elem = _utils_js__WEBPACK_IMPORTED_MODULE_1__["default"].elementsAt(mousePos[0], mousePos[1], graph);
-          var inPort = _utils_js__WEBPACK_IMPORTED_MODULE_1__["default"].getInPortFromPoint(elem, graph);
+          var mousePos = {
+            x: d3__WEBPACK_IMPORTED_MODULE_3__["event"].x,
+            y: d3__WEBPACK_IMPORTED_MODULE_3__["event"].y
+          };
+          var elems = _utils_js__WEBPACK_IMPORTED_MODULE_1__["default"].elementsAt(mousePos.x, mousePos.y);
+          var inPort = _utils_js__WEBPACK_IMPORTED_MODULE_1__["default"].getInPortFromPoint(elems, graph);
 
           if (inPort != null && inPort.allowConnected()) {
             _utils_js__WEBPACK_IMPORTED_MODULE_1__["default"].connectTwoPort(inPort, outPort, path);
+            path.addMarkerEnd();
+            inPort.hide();
+            outPort.update();
           } else {
             if (path != null) {
               path.remove();
@@ -30029,6 +30191,21 @@ function (_Port2) {
       portCoord.y = portCoord.bottom;
       var temp = _utils_js__WEBPACK_IMPORTED_MODULE_1__["default"].coordinateTransform(this.group.graph, portCoord);
       return [temp.x, temp.y];
+    }
+  }, {
+    key: "update",
+    value: function update() {
+      this.style('r', '5');
+      this.style('fill', '#808080');
+
+      this.__updateOutPortConnection();
+    }
+  }, {
+    key: "__updateOutPortConnection",
+    value: function __updateOutPortConnection() {
+      if (this.path != null) {
+        this.path.update();
+      }
     }
   }]);
 
@@ -30336,6 +30513,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var d3__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! d3 */ "./node_modules/d3/index.js");
 /* harmony import */ var _port_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./port.js */ "./src/port.js");
 /* harmony import */ var _spotlight_type_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./spotlight_type.js */ "./src/spotlight_type.js");
+/* harmony import */ var _path_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./path.js */ "./src/path.js");
+
 
 
 
@@ -30354,31 +30533,8 @@ var defautlLineGenerator = d3__WEBPACK_IMPORTED_MODULE_0__["line"]().x(function 
   return d[1];
 }).curve(d3__WEBPACK_IMPORTED_MODULE_0__["curveBasis"]);
 
-var elementsAt = function elementsAt(x, y, graph) {
-  var elements = [];
-  var xBias = parseInt(graph.d3Inst.style('left'));
-  var yBias = parseInt(graph.d3Inst.style('top'));
-
-  if (!isNaN(xBias)) {
-    x = x + xBias;
-  }
-
-  if (!isNaN(yBias)) {
-    y = y + yBias;
-  }
-
-  var current = document.elementFromPoint(x, y);
-
-  while (current && current.nearestViewportElement) {
-    elements.push(current);
-    current.style.display = "none";
-    current = document.elementFromPoint(x, y);
-  }
-
-  elements.forEach(function (elem) {
-    elem.style.display = '';
-  });
-  return elements;
+var elementsAt = function elementsAt(x, y) {
+  return document.elementsFromPoint(x, y);
 };
 
 var getOutPortFromPoint = function getOutPortFromPoint(elem, graph) {

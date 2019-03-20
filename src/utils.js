@@ -1,6 +1,7 @@
 import * as d3 from 'd3';
 import { Port } from './port.js';
 import SpotlightType from './spotlight_type.js';
+import Path from './path.js';
 
 let coordinateTransform = function (graph, coord) {
     let CTM = graph.node().getScreenCTM();
@@ -16,29 +17,8 @@ let defautlLineGenerator = d3.line().x(function (d) {
     return d[1];
 }).curve(d3.curveBasis);
 
-let elementsAt = function (x, y, graph) {
-    let elements = [];
-    let xBias = parseInt(graph.d3Inst.style('left'));
-    let yBias = parseInt(graph.d3Inst.style('top'));
-
-    if (!isNaN(xBias)) {
-        x = x + xBias;
-    }
-
-    if (!isNaN(yBias)) {
-        y = y + yBias;
-    }
-
-    let current = document.elementFromPoint(x, y);
-    while (current && current.nearestViewportElement) {
-        elements.push(current);
-        current.style.display = "none";
-        current = document.elementFromPoint(x, y);
-    }
-    elements.forEach(function (elem) {
-        elem.style.display = '';
-    });
-    return elements;
+let elementsAt = function (x, y) {
+    return document.elementsFromPoint(x, y);
 }
 
 let getOutPortFromPoint = function (elem, graph) {
@@ -65,7 +45,6 @@ let getInPortFromPoint = function (elem, graph) {
             break;
         }
     }
-
     return element;
 }
 
