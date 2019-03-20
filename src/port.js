@@ -95,6 +95,8 @@ export class InPort extends Port {
             let keep = true;
             let path = new Path(graph, Utils.defautlLineGenerator);
             path.init();
+            path.addMarkerEnd();
+            inPort.hide();
 
             graph.on('mousemove', function () {
                 d3.event.stopPropagation();
@@ -106,9 +108,13 @@ export class InPort extends Port {
 
             graph.on('mouseup', function () {
                 d3.event.stopPropagation();
-                let mousePos = d3.mouse(this);
-                let elem = Utils.elementsAt(mousePos[0], mousePos[1], graph);
-                let outPort = Utils.getOutPortFromPoint(elem, graph);
+                let mousePos = {
+                    x: d3.event.x,
+                    y: d3.event.y
+                };
+
+                let elems = Utils.elementsAt(mousePos.x, mousePos.y);
+                let outPort = Utils.getOutPortFromPoint(elems, graph);
                 if (outPort != null && outPort.allowConnected()) {
                     Utils.connectTwoPort(inPort, outPort, path);
                     path.addMarkerEnd();
@@ -117,6 +123,7 @@ export class InPort extends Port {
                 } else {
                     if (path != null) {
                         path.remove();
+                        inPort.show();
                     }
                 }
 
@@ -215,6 +222,7 @@ export class ConstraintInPort extends InPort {
     }
 
     connect() {
+
     }
 }
 

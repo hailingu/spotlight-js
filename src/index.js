@@ -7,7 +7,6 @@ import { Arrow } from './arrow.js';
 let graph = new Graph('svg');
 let example = new ExampleGroup(graph);
 example.init();
-example.addInPort();
 example.addOutPort();
 example.drag();
 

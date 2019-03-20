@@ -103,7 +103,7 @@ export class ExampleGroup extends Group {
     __updatePort() {
         let split = Object.keys(this.inPorts).length;
 
-        if (split == 1) {
+        if (split <= 1) {
             return ;
         }
 

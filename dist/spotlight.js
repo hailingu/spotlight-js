@@ -29765,6 +29765,11 @@ function (_Group) {
     key: "__updatePort",
     value: function __updatePort() {
       var split = Object.keys(this.inPorts).length;
+
+      if (split <= 1) {
+        return;
+      }
+
       var pos = this.body.d3Inst.attr('width') / (split + 1);
       var i = 1;
 
@@ -29835,7 +29840,6 @@ __webpack_require__.r(__webpack_exports__);
 var graph = new _graph_js__WEBPACK_IMPORTED_MODULE_0__["default"]('svg');
 var example = new _group_js__WEBPACK_IMPORTED_MODULE_1__["ExampleGroup"](graph);
 example.init();
-example.addInPort();
 example.addOutPort();
 example.drag();
 var example2 = new _group_js__WEBPACK_IMPORTED_MODULE_1__["ExampleGroup"](graph);
@@ -30107,6 +30111,8 @@ function (_Port) {
         var keep = true;
         var path = new _path_js__WEBPACK_IMPORTED_MODULE_2__["Path"](graph, _utils_js__WEBPACK_IMPORTED_MODULE_1__["default"].defautlLineGenerator);
         path.init();
+        path.addMarkerEnd();
+        inPort.hide();
         graph.on('mousemove', function () {
           d3__WEBPACK_IMPORTED_MODULE_3__["event"].stopPropagation();
 
@@ -30117,9 +30123,12 @@ function (_Port) {
         });
         graph.on('mouseup', function () {
           d3__WEBPACK_IMPORTED_MODULE_3__["event"].stopPropagation();
-          var mousePos = d3__WEBPACK_IMPORTED_MODULE_3__["mouse"](this);
-          var elem = _utils_js__WEBPACK_IMPORTED_MODULE_1__["default"].elementsAt(mousePos[0], mousePos[1], graph);
-          var outPort = _utils_js__WEBPACK_IMPORTED_MODULE_1__["default"].getOutPortFromPoint(elem, graph);
+          var mousePos = {
+            x: d3__WEBPACK_IMPORTED_MODULE_3__["event"].x,
+            y: d3__WEBPACK_IMPORTED_MODULE_3__["event"].y
+          };
+          var elems = _utils_js__WEBPACK_IMPORTED_MODULE_1__["default"].elementsAt(mousePos.x, mousePos.y);
+          var outPort = _utils_js__WEBPACK_IMPORTED_MODULE_1__["default"].getOutPortFromPoint(elems, graph);
 
           if (outPort != null && outPort.allowConnected()) {
             _utils_js__WEBPACK_IMPORTED_MODULE_1__["default"].connectTwoPort(inPort, outPort, path);
@@ -30129,6 +30138,7 @@ function (_Port) {
           } else {
             if (path != null) {
               path.remove();
+              inPort.show();
             }
           }
 
