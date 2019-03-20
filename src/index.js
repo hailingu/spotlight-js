@@ -14,10 +14,12 @@ example.drag();
 let example2 = new ExampleGroup(graph);
 example2.init();
 example2.addInPort();
+example2.addInPort();
+example2.addOutPort();
 example2.addOutPort();
 example2.drag();
 
 let arrow = new Arrow(graph);
 
 console.log(graph);
-console.log(example);
+console.log(example2);

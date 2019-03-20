@@ -29770,7 +29770,8 @@ function (_Group) {
         return;
       }
 
-      var pos = this.body.d3Inst.attr('width') / (split + 1);
+      var pos = parseInt(this.body.d3Inst.style('width')) / (split + 1);
+      console.log(pos);
       var i = 1;
 
       for (var key in this.inPorts) {
@@ -29779,7 +29780,6 @@ function (_Group) {
       }
 
       split = Object.keys(this.outPorts).length;
-      pos = this.body.d3Inst.attr('width') / (split + 1);
       i = 1;
 
       for (var _key in this.outPorts) {
@@ -29845,11 +29845,13 @@ example.drag();
 var example2 = new _group_js__WEBPACK_IMPORTED_MODULE_1__["ExampleGroup"](graph);
 example2.init();
 example2.addInPort();
+example2.addInPort();
+example2.addOutPort();
 example2.addOutPort();
 example2.drag();
 var arrow = new _arrow_js__WEBPACK_IMPORTED_MODULE_4__["Arrow"](graph);
 console.log(graph);
-console.log(example);
+console.log(example2);
 
 /***/ }),
 
