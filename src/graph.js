@@ -52,6 +52,22 @@ export default class Graph {
 
         element.remove();
     }
+
+    hightlightElement() {
+
+    }
+
+    unHighlightElement() {
+        
+    }
+
+    highlightElementWithConstraint() {
+
+    }
+
+    unHighlightElementWithConstraint() {
+        
+    }
     
     elementExist(element) {
         if (!Utils.legaledElement(element)) {

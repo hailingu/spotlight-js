@@ -10,14 +10,20 @@ You can creat object like this:
 
 ### step 2. create an svg object with a out port:
 
-	let obj1 = new SpotlightBasicTextContainer(graph, 'obj1', 'obj1');
-	obj1.initView();
-	obj1.addOutPort();
+	let graph = new Graph('svg');
+	let example = new ExampleGroup(graph);
+	example.init();
+	example.addOutPort();
+	example.drag();
 
-	let obj2 = new SpotlightBasicTextContainer(graph, 'obj2', 'obj2');
-	obj2.initView();
-	obj2.addOutPort();
-	obj2.addInPort();
+
+	let example2 = new ExampleGroup(graph);
+	example2.init();
+	example2.addInPort();
+	example2.addInPort();
+	example2.addOutPort();
+	example2.addOutPort();
+	example2.drag();
 
 ### end
 you can drag and connect these two svg object.
