@@ -24,15 +24,28 @@ You can creat object like this:
 	example.init();
 	example.addOutPort();
 	example.drag();
-
+	example.displayText('example1');
 
 	let example2 = new ExampleGroup(graph);
 	example2.init();
 	example2.addInPort();
-	example2.addInPort();
-	example2.addOutPort();
-	example2.addOutPort();
+	example2.addConstraintOutPort('data');
 	example2.drag();
+	example2.displayText('example2');
+
+	let example3 = new ExampleGroup(graph);
+	example3.init();
+	example3.addConstraintInPort('data');
+	example3.addInPort();
+	example3.addOutPort();
+	example3.drag();
+	example3.displayText('example3');
+
+	let arrow = new Arrow(graph);
+
+	console.log(graph);
+	console.log(example2);
+	console.log(example3);
 
 ### end
 you can drag and connect these two svg object.
