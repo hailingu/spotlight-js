@@ -144,7 +144,7 @@ export class ExampleGroup extends Group {
         if (port.portType === Port.CONSTRAINT_IN) {
             for (let key in this.outPorts) {
                 let outPort = this.outPorts[key];
-                if (outPort.portType === Port.CONSTRAINT_OUT) {
+                if (outPort.portType === Port.CONSTRAINT_OUT && outPort.connected == false) {
                     if (outPort.allowConnected(port)) {
                         outPort.allow();
                         highlightCnt = highlightCnt + 1;
@@ -156,7 +156,7 @@ export class ExampleGroup extends Group {
         } else if (port.portType === Port.CONSTRAINT_OUT) {
             for (let key in this.inPorts) {
                 let inPort = this.inPorts[key];
-                if (inPort.portType === Port.CONSTRAINT_IN) {
+                if (inPort.portType === Port.CONSTRAINT_IN && inPort.connected == false) {
                     if (inPort.allowConnected(port)) {
                         highlightCnt = highlightCnt + 1;
                         inPort.allow();
@@ -172,18 +172,18 @@ export class ExampleGroup extends Group {
         }
     }  
 
-    unHighlightWigthConstraint() {
+    unHighlightWithConstraint() {
         this.body.unHighlight();
         for (let key in this.inPorts) {
             let inPort = this.inPorts[key];
-            if (inPort.portType = Port.CONSTRAINT_IN) {
+            if (inPort.portType == Port.CONSTRAINT_IN && inPort.connected == false) {
                 inPort.origin();
             }
         }
 
         for (let key in this.outPorts) {
             let outPort = this.outPorts[key];
-            if (outPort.portType = Port.CONSTRAINT_OUT) {
+            if (outPort.portType == Port.CONSTRAINT_OUT && outPort.connected == false) {
                 outPort.origin();
             }
         }

@@ -94,6 +94,20 @@ export default class Graph {
             this.context.group[key].highlightWithContraint(port);
         }
     }
+
+    unHighlightWithConstraint() {
+        for (let key in this.context.group) {
+            this.context.group[key].unHighlightWithConstraint();
+        }
+
+        for (let key in this.context.shape) {
+           let shape = this.context.shape[key];
+           if (shape.graph == null) {
+               continue;
+           }
+           shape.unHighlight();
+        }
+    }
     
     elementExist(element) {
         if (!Utils.legaledElement(element)) {
@@ -167,6 +181,27 @@ export default class Graph {
 
         element = this.context.group[id];
         if (element != null) return element;
+    }
+
+    exportGraph() {
+        let exportJson = {};
+        for (let key in this.context.group) {
+            let job = {};
+            let group = this.context.group[key];
+            if (group.hasOwnProperty('name')) {
+                job.name = group.name;
+            }
+
+            job.id = group.id;
+            job.dependency = [];
+            if (Object.keys(group.inPorts).length != 0) {
+                for (let dependKey in group.inPorts) {
+                    job.dependency.push(group.inPorts[dependKey].path.outPort.group.id);
+                }
+            }
+            exportJson[job.id] = job;
+        }
+        return exportJson;
     }
 
     __allowRegist(element) {

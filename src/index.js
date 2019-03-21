@@ -22,7 +22,7 @@ example2.displayText('example2');
 let example3 = new ExampleGroup(graph);
 example3.init();
 example3.addConstraintInPort('data');
-example3.addInPort();
+example3.addConstraintInPort('model');
 example3.addOutPort();
 example3.drag();
 example3.displayText('example3');

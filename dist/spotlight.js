@@ -29560,6 +29560,23 @@ function () {
       }
     }
   }, {
+    key: "unHighlightWithConstraint",
+    value: function unHighlightWithConstraint() {
+      for (var key in this.context.group) {
+        this.context.group[key].unHighlightWithConstraint();
+      }
+
+      for (var _key3 in this.context.shape) {
+        var shape = this.context.shape[_key3];
+
+        if (shape.graph == null) {
+          continue;
+        }
+
+        shape.unHighlight();
+      }
+    }
+  }, {
     key: "elementExist",
     value: function elementExist(element) {
       if (!_utils_js__WEBPACK_IMPORTED_MODULE_1__["default"].legaledElement(element)) {
@@ -29631,6 +29648,33 @@ function () {
       if (element != null) return element;
       element = this.context.group[id];
       if (element != null) return element;
+    }
+  }, {
+    key: "exportGraph",
+    value: function exportGraph() {
+      var exportJson = {};
+
+      for (var key in this.context.group) {
+        var job = {};
+        var group = this.context.group[key];
+
+        if (group.hasOwnProperty('name')) {
+          job.name = group.name;
+        }
+
+        job.id = group.id;
+        job.dependency = [];
+
+        if (Object.keys(group.inPorts).length != 0) {
+          for (var dependKey in group.inPorts) {
+            job.dependency.push(group.inPorts[dependKey].path.outPort.group.id);
+          }
+        }
+
+        exportJson[job.id] = job;
+      }
+
+      return exportJson;
     }
   }, {
     key: "__allowRegist",
@@ -29864,7 +29908,7 @@ function (_Group) {
         for (var key in this.outPorts) {
           var outPort = this.outPorts[key];
 
-          if (outPort.portType === _port_js__WEBPACK_IMPORTED_MODULE_2__["Port"].CONSTRAINT_OUT) {
+          if (outPort.portType === _port_js__WEBPACK_IMPORTED_MODULE_2__["Port"].CONSTRAINT_OUT && outPort.connected == false) {
             if (outPort.allowConnected(port)) {
               outPort.allow();
               highlightCnt = highlightCnt + 1;
@@ -29877,7 +29921,7 @@ function (_Group) {
         for (var _key in this.inPorts) {
           var inPort = this.inPorts[_key];
 
-          if (inPort.portType === _port_js__WEBPACK_IMPORTED_MODULE_2__["Port"].CONSTRAINT_IN) {
+          if (inPort.portType === _port_js__WEBPACK_IMPORTED_MODULE_2__["Port"].CONSTRAINT_IN && inPort.connected == false) {
             if (inPort.allowConnected(port)) {
               highlightCnt = highlightCnt + 1;
               inPort.allow();
@@ -29893,14 +29937,14 @@ function (_Group) {
       }
     }
   }, {
-    key: "unHighlightWigthConstraint",
-    value: function unHighlightWigthConstraint() {
+    key: "unHighlightWithConstraint",
+    value: function unHighlightWithConstraint() {
       this.body.unHighlight();
 
       for (var key in this.inPorts) {
         var inPort = this.inPorts[key];
 
-        if (inPort.portType = _port_js__WEBPACK_IMPORTED_MODULE_2__["Port"].CONSTRAINT_IN) {
+        if (inPort.portType == _port_js__WEBPACK_IMPORTED_MODULE_2__["Port"].CONSTRAINT_IN && inPort.connected == false) {
           inPort.origin();
         }
       }
@@ -29908,7 +29952,7 @@ function (_Group) {
       for (var _key2 in this.outPorts) {
         var outPort = this.outPorts[_key2];
 
-        if (outPort.portType = _port_js__WEBPACK_IMPORTED_MODULE_2__["Port"].CONSTRAINT_OUT) {
+        if (outPort.portType == _port_js__WEBPACK_IMPORTED_MODULE_2__["Port"].CONSTRAINT_OUT && outPort.connected == false) {
           outPort.origin();
         }
       }
@@ -30008,7 +30052,7 @@ example2.displayText('example2');
 var example3 = new _group_js__WEBPACK_IMPORTED_MODULE_1__["ExampleGroup"](graph);
 example3.init();
 example3.addConstraintInPort('data');
-example3.addInPort();
+example3.addConstraintInPort('model');
 example3.addOutPort();
 example3.drag();
 example3.displayText('example3');
@@ -30371,7 +30415,7 @@ function (_Port2) {
           var elems = _utils_js__WEBPACK_IMPORTED_MODULE_1__["default"].elementsAt(mousePos.x, mousePos.y);
           var inPort = _utils_js__WEBPACK_IMPORTED_MODULE_1__["default"].getInPortFromPoint(elems, graph);
 
-          if (inPort != null && inPort.allowConnected(inPort) && outPort.allowConnected(inPort)) {
+          if (inPort != null && inPort.allowConnected(outPort) && outPort.allowConnected(inPort)) {
             _utils_js__WEBPACK_IMPORTED_MODULE_1__["default"].connectTwoPort(inPort, outPort, path);
             path.addMarkerEnd();
             inPort.hide();
@@ -30479,7 +30523,7 @@ function (_InPort) {
             inPort.show();
           }
 
-          graph.unHighlight();
+          graph.unHighlightWithConstraint();
           keep = null;
           path = null;
         });
@@ -30571,7 +30615,7 @@ function (_OutPort) {
             inPort.show();
           }
 
-          graph.unHighlight();
+          graph.unHighlightWithConstraint();
           keep = null;
           path = null;
         });

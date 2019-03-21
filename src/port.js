@@ -177,7 +177,7 @@ export class OutPort extends Port {
                 let elems = Utils.elementsAt(mousePos.x, mousePos.y);
                 let inPort = Utils.getInPortFromPoint(elems, graph);
 
-                if (inPort != null && inPort.allowConnected(inPort) && outPort.allowConnected(inPort)) {
+                if (inPort != null && inPort.allowConnected(outPort) && outPort.allowConnected(inPort)) {
                     Utils.connectTwoPort(inPort, outPort, path);
                     path.addMarkerEnd();
                     inPort.hide();
@@ -266,7 +266,7 @@ export class ConstraintInPort extends InPort {
                     }
                     inPort.show();
                 }
-                graph.unHighlight();
+                graph.unHighlightWithConstraint();
                 keep = null;
                 path = null;
             });
@@ -340,7 +340,7 @@ export class ConstraintOutPort extends OutPort {
                     }
                     inPort.show();
                 }
-                graph.unHighlight();
+                graph.unHighlightWithConstraint();
                 keep = null;
                 path = null;
             });
