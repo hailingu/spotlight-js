@@ -95,7 +95,7 @@
 
 exports = module.exports = __webpack_require__(/*! ../../node_modules/css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js")(false);
 // Module
-exports.push([module.i, ".ExampleGroup {\n\tstroke-width: 1;\n    fill: none;\n    transform: 'translate(20,20)';\n}\n\n.DefaultRect {\n    width: 281px;\n    height: 51px;\n    fill:#FFFFFF;\n    stroke: #BCBCBC;\n    x: 0;\n    y: 0;\n    rx: 10;\n    stroke-linejoin: round;\n}\n\n.DefaultTextBody {\n\tfont-family: Helvetica;\n\tfont-size: 15;\n\tfont-weight: normal;\n\tfill: #000000;\n}\n\n.DefaultTextSpan {\n    x: 84;\n    y: 31;\n}\n\ng rect:hover {\n\tstroke-width: 3;\n\tstroke: #808080;\n}\n\n.DefaultInPort {\n    stroke: #BCBCBC;\n    fill: #FFFFFF;\n    cx: 140.5;\n    cy: 0;\n    r: 7;\n}\n\n.DefaultOutPort {\n    stroke: #BCBCBC;\n    fill: #FFFFFF;\n    cx: 140.5;\n    cy: 51;\n    r: 7;\n}\n\n.DefaultPath {\n    stroke: #808080;\n    stroke-width: 1px;\n    fill: none;\n}\n\n.DefaultArrow {\n    markerWidth: 14px;\n    markerheight: 14px;\n    markerUnits: strokeWidth;\n    viewBox: 0 0 14 14;\n    refX: 2;\n    refY: 7;\n    orient: auto;\n    fill: #808080;\n}", ""]);
+exports.push([module.i, ".ExampleGroup {\n\tstroke-width: 1;\n    fill: none;\n    transform: 'translate(20,20)';\n}\n\n.DefaultRect {\n    width: 281px;\n    height: 51px;\n    fill:#FFFFFF;\n    stroke: #BCBCBC;\n    x: 0;\n    y: 0;\n    rx: 10;\n    stroke-linejoin: round;\n}\n\n.DefaultTextBody {\n    font-size: 15;\n}\n\n.DefaultTextSpan {\n\tfont-family: Helvetica;\n\tfont-weight: normal;\n    fill: #000000;\n}\n\ng rect:hover {\n\tstroke-width: 3;\n\tstroke: #808080;\n}\n\n.DefaultInPort {\n    stroke: #BCBCBC;\n    fill: #FFFFFF;\n    cx: 140.5;\n    cy: 0;\n    r: 7;\n}\n\n.DefaultOutPort {\n    stroke: #BCBCBC;\n    fill: #FFFFFF;\n    cx: 140.5;\n    cy: 51;\n    r: 7;\n}\n\n.DefaultPath {\n    stroke: #808080;\n    stroke-width: 1px;\n    fill: none;\n}\n\n.DefaultArrow {\n    markerWidth: 14px;\n    markerheight: 14px;\n    markerUnits: strokeWidth;\n    viewBox: 0 0 14 14;\n    refX: 2;\n    refY: 7;\n    orient: auto;\n    fill: #808080;\n}\n\n\n.DefaultHighlightRect {\n    width: 281px;\n    height: 51px;\n    fill:#FFFFFF;\n    x: 0;\n    y: 0;\n    rx: 10;\n    stroke-linejoin: round;\n    stroke-dasharray: 5 3;\n    stroke: #82B53A;\n}\n\nsvg {\n    user-select: none;\n}", ""]);
 
 
 
@@ -29513,6 +29513,53 @@ function () {
       element.remove();
     }
   }, {
+    key: "hightlight",
+    value: function hightlight(element) {
+      for (var key in this.context.group) {
+        if (element.id === key) {
+          continue;
+        }
+
+        this.context.group[key].hightlight();
+      }
+
+      for (var _key in this.context.shape) {
+        if (element.id === _key) {
+          continue;
+        }
+
+        this.context.shape[_key].hightlight();
+      }
+    }
+  }, {
+    key: "unHighlight",
+    value: function unHighlight() {
+      for (var key in this.context.group) {
+        this.context.group[key].unHighlight();
+      }
+
+      for (var _key2 in this.context.shape) {
+        var shape = this.context.shape[_key2];
+
+        if (shape.graph == null) {
+          continue;
+        }
+
+        shape.unHighlight();
+      }
+    }
+  }, {
+    key: "highlightWithConstraint",
+    value: function highlightWithConstraint(element, port) {
+      for (var key in this.context.group) {
+        if (element.id === key) {
+          continue;
+        }
+
+        this.context.group[key].highlightWithContraint(port);
+      }
+    }
+  }, {
     key: "elementExist",
     value: function elementExist(element) {
       if (!_utils_js__WEBPACK_IMPORTED_MODULE_1__["default"].legaledElement(element)) {
@@ -29621,11 +29668,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var d3__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! d3 */ "./node_modules/d3/index.js");
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
 
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
 
@@ -29657,6 +29704,24 @@ function (_Shape) {
     _this.type = _spotlight_type_js__WEBPACK_IMPORTED_MODULE_1__["default"].GROUP;
     return _this;
   }
+
+  _createClass(Group, [{
+    key: "highlight",
+    value: function highlight() {
+      this.body.highlight();
+    }
+  }, {
+    key: "unHighlight",
+    value: function unHighlight() {
+      this.body.unHighlight();
+    }
+  }, {
+    key: "highlightWithContraint",
+    value: function highlightWithContraint() {}
+  }, {
+    key: "unHighlightWigthConstraint",
+    value: function unHighlightWigthConstraint() {}
+  }]);
 
   return Group;
 }(_shape_js__WEBPACK_IMPORTED_MODULE_0__["Shape"]);
@@ -29697,6 +29762,8 @@ function (_Group) {
       this.body.init();
       this.textBody.init();
       this.text.init();
+      this.text.attr('x', '84');
+      this.text.attr('y', '31');
       this.graph.registElement(this.body);
       this.graph.registElement(this.textBody);
       this.graph.registElement(this.text);
@@ -29721,6 +29788,28 @@ function (_Group) {
     key: "addOutPort",
     value: function addOutPort() {
       var port = new _port_js__WEBPACK_IMPORTED_MODULE_2__["OutPort"](this);
+      port.init();
+      port.attr('class', 'DefaultOutPort');
+
+      this.__registPort(port);
+
+      this.__updatePort();
+    }
+  }, {
+    key: "addConstraintInPort",
+    value: function addConstraintInPort(constraint) {
+      var port = new _port_js__WEBPACK_IMPORTED_MODULE_2__["ConstraintInPort"](this, constraint);
+      port.init();
+      port.attr('class', 'DefaultInPort');
+
+      this.__registPort(port);
+
+      this.__updatePort();
+    }
+  }, {
+    key: "addConstraintOutPort",
+    value: function addConstraintOutPort(constraint) {
+      var port = new _port_js__WEBPACK_IMPORTED_MODULE_2__["ConstraintOutPort"](this, constraint);
       port.init();
       port.attr('class', 'DefaultOutPort');
 
@@ -29762,6 +29851,69 @@ function (_Group) {
       this.d3Inst.call(drag);
     }
   }, {
+    key: "displayText",
+    value: function displayText(_displayText) {
+      this.text.d3Inst.text(_displayText);
+    }
+  }, {
+    key: "highlightWithContraint",
+    value: function highlightWithContraint(port) {
+      var highlightCnt = 0;
+
+      if (port.portType === _port_js__WEBPACK_IMPORTED_MODULE_2__["Port"].CONSTRAINT_IN) {
+        for (var key in this.outPorts) {
+          var outPort = this.outPorts[key];
+
+          if (outPort.portType === _port_js__WEBPACK_IMPORTED_MODULE_2__["Port"].CONSTRAINT_OUT) {
+            if (outPort.allowConnected(port)) {
+              outPort.allow();
+              highlightCnt = highlightCnt + 1;
+            } else {
+              outPort.forbid();
+            }
+          }
+        }
+      } else if (port.portType === _port_js__WEBPACK_IMPORTED_MODULE_2__["Port"].CONSTRAINT_OUT) {
+        for (var _key in this.inPorts) {
+          var inPort = this.inPorts[_key];
+
+          if (inPort.portType === _port_js__WEBPACK_IMPORTED_MODULE_2__["Port"].CONSTRAINT_IN) {
+            if (inPort.allowConnected(port)) {
+              highlightCnt = highlightCnt + 1;
+              inPort.allow();
+            } else {
+              inPort.forbid();
+            }
+          }
+        }
+      }
+
+      if (highlightCnt) {
+        this.body.highlight();
+      }
+    }
+  }, {
+    key: "unHighlightWigthConstraint",
+    value: function unHighlightWigthConstraint() {
+      this.body.unHighlight();
+
+      for (var key in this.inPorts) {
+        var inPort = this.inPorts[key];
+
+        if (inPort.portType = _port_js__WEBPACK_IMPORTED_MODULE_2__["Port"].CONSTRAINT_IN) {
+          inPort.origin();
+        }
+      }
+
+      for (var _key2 in this.outPorts) {
+        var outPort = this.outPorts[_key2];
+
+        if (outPort.portType = _port_js__WEBPACK_IMPORTED_MODULE_2__["Port"].CONSTRAINT_OUT) {
+          outPort.origin();
+        }
+      }
+    }
+  }, {
     key: "__updatePort",
     value: function __updatePort() {
       var split = Object.keys(this.inPorts).length;
@@ -29779,10 +29931,15 @@ function (_Group) {
       }
 
       split = Object.keys(this.outPorts).length;
+
+      if (split <= 1) {
+        return;
+      }
+
       i = 1;
 
-      for (var _key in this.outPorts) {
-        this.outPorts[_key].style('cx', pos * i);
+      for (var _key3 in this.outPorts) {
+        this.outPorts[_key3].style('cx', pos * i);
 
         i = i + 1;
       }
@@ -29841,16 +29998,24 @@ var example = new _group_js__WEBPACK_IMPORTED_MODULE_1__["ExampleGroup"](graph);
 example.init();
 example.addOutPort();
 example.drag();
+example.displayText('example1');
 var example2 = new _group_js__WEBPACK_IMPORTED_MODULE_1__["ExampleGroup"](graph);
 example2.init();
 example2.addInPort();
-example2.addInPort();
-example2.addOutPort();
-example2.addOutPort();
+example2.addConstraintOutPort('data');
 example2.drag();
+example2.displayText('example2');
+var example3 = new _group_js__WEBPACK_IMPORTED_MODULE_1__["ExampleGroup"](graph);
+example3.init();
+example3.addConstraintInPort('data');
+example3.addInPort();
+example3.addOutPort();
+example3.drag();
+example3.displayText('example3');
 var arrow = new _arrow_js__WEBPACK_IMPORTED_MODULE_4__["Arrow"](graph);
 console.log(graph);
 console.log(example2);
+console.log(example3);
 
 /***/ }),
 
@@ -30054,9 +30219,7 @@ function () {
     }
   }, {
     key: "allowConnected",
-    value: function allowConnected() {
-      return this.connected == false;
-    }
+    value: function allowConnected(port) {}
   }, {
     key: "attr",
     value: function attr(key, value) {
@@ -30131,10 +30294,8 @@ function (_Port) {
           var elems = _utils_js__WEBPACK_IMPORTED_MODULE_1__["default"].elementsAt(mousePos.x, mousePos.y);
           var outPort = _utils_js__WEBPACK_IMPORTED_MODULE_1__["default"].getOutPortFromPoint(elems, graph);
 
-          if (outPort != null && outPort.allowConnected() && inPort.allowConnected()) {
+          if (outPort != null && outPort.allowConnected(inPort) && inPort.allowConnected(outPort)) {
             _utils_js__WEBPACK_IMPORTED_MODULE_1__["default"].connectTwoPort(inPort, outPort, path);
-            path.addMarkerEnd();
-            inPort.hide();
             outPort.update();
           } else {
             if (path != null) {
@@ -30157,6 +30318,11 @@ function (_Port) {
       portCoord.y = this.group.body.node().getBoundingClientRect().y;
       var temp = _utils_js__WEBPACK_IMPORTED_MODULE_1__["default"].coordinateTransform(this.group.graph, portCoord);
       return [temp.x, temp.y];
+    }
+  }, {
+    key: "allowConnected",
+    value: function allowConnected(port) {
+      return this.connected == false && port.portType === Port.OUT;
     }
   }]);
 
@@ -30205,7 +30371,7 @@ function (_Port2) {
           var elems = _utils_js__WEBPACK_IMPORTED_MODULE_1__["default"].elementsAt(mousePos.x, mousePos.y);
           var inPort = _utils_js__WEBPACK_IMPORTED_MODULE_1__["default"].getInPortFromPoint(elems, graph);
 
-          if (inPort != null && inPort.allowConnected() && outPort.allowConnected()) {
+          if (inPort != null && inPort.allowConnected(inPort) && outPort.allowConnected(inPort)) {
             _utils_js__WEBPACK_IMPORTED_MODULE_1__["default"].connectTwoPort(inPort, outPort, path);
             path.addMarkerEnd();
             inPort.hide();
@@ -30245,6 +30411,11 @@ function (_Port2) {
         this.path.update();
       }
     }
+  }, {
+    key: "allowConnected",
+    value: function allowConnected(port) {
+      return this.connected == false && port.portType === Port.IN;
+    }
   }]);
 
   return OutPort;
@@ -30267,7 +30438,76 @@ function (_InPort) {
 
   _createClass(ConstraintInPort, [{
     key: "connect",
-    value: function connect() {}
+    value: function connect() {
+      var inPort = this;
+      this.d3Inst.on('mousedown', function () {
+        d3__WEBPACK_IMPORTED_MODULE_3__["event"].stopPropagation();
+        var group = inPort.group;
+        var graph = group.graph;
+        graph.highlightWithConstraint(group, inPort);
+        var endPoint = inPort.getConnectPoint();
+        var keep = true;
+        var path = new _path_js__WEBPACK_IMPORTED_MODULE_2__["Path"](graph, _utils_js__WEBPACK_IMPORTED_MODULE_1__["default"].defautlLineGenerator);
+        path.init();
+        path.addMarkerEnd();
+        inPort.hide();
+        graph.on('mousemove', function () {
+          d3__WEBPACK_IMPORTED_MODULE_3__["event"].stopPropagation();
+
+          if (keep) {
+            var startPoint = d3__WEBPACK_IMPORTED_MODULE_3__["mouse"](this);
+            path.updateConnectPoint(startPoint, endPoint);
+          }
+        });
+        graph.on('mouseup', function () {
+          d3__WEBPACK_IMPORTED_MODULE_3__["event"].stopPropagation();
+          var mousePos = {
+            x: d3__WEBPACK_IMPORTED_MODULE_3__["event"].x,
+            y: d3__WEBPACK_IMPORTED_MODULE_3__["event"].y
+          };
+          var elems = _utils_js__WEBPACK_IMPORTED_MODULE_1__["default"].elementsAt(mousePos.x, mousePos.y);
+          var outPort = _utils_js__WEBPACK_IMPORTED_MODULE_1__["default"].getOutPortFromPoint(elems, graph);
+
+          if (outPort != null && outPort.allowConnected(inPort) && inPort.allowConnected(outPort)) {
+            _utils_js__WEBPACK_IMPORTED_MODULE_1__["default"].connectTwoPort(inPort, outPort, path);
+            outPort.update();
+          } else {
+            if (path != null) {
+              path.remove();
+            }
+
+            inPort.show();
+          }
+
+          graph.unHighlight();
+          keep = null;
+          path = null;
+        });
+      });
+    }
+  }, {
+    key: "allowConnected",
+    value: function allowConnected(port) {
+      return this.connected == false && port.portType == Port.CONSTRAINT_OUT && this.constraint === port.constraint;
+    }
+  }, {
+    key: "allow",
+    value: function allow() {
+      this.style('r', '5');
+      this.style('fill', 'green');
+    }
+  }, {
+    key: "forbid",
+    value: function forbid() {
+      this.style('r', '5');
+      this.style('fill', 'red');
+    }
+  }, {
+    key: "origin",
+    value: function origin() {
+      this.style('y', '7');
+      this.style('fill', '#FFFFFF');
+    }
   }]);
 
   return ConstraintInPort;
@@ -30277,19 +30517,89 @@ var ConstraintOutPort =
 function (_OutPort) {
   _inherits(ConstraintOutPort, _OutPort);
 
-  function ConstraintOutPort(group) {
+  function ConstraintOutPort(group, constraint) {
     var _this4;
 
     _classCallCheck(this, ConstraintOutPort);
 
     _this4 = _possibleConstructorReturn(this, _getPrototypeOf(ConstraintOutPort).call(this, group));
     _this4.portType = Port.CONSTRAINT_OUT;
+    _this4.constraint = constraint;
     return _this4;
   }
 
   _createClass(ConstraintOutPort, [{
     key: "connect",
-    value: function connect() {}
+    value: function connect() {
+      var outPort = this;
+      this.d3Inst.on('mousedown', function () {
+        d3__WEBPACK_IMPORTED_MODULE_3__["event"].stopPropagation();
+        var group = outPort.group;
+        var graph = group.graph;
+        graph.highlightWithConstraint(group, outPort);
+        var startPoint = outPort.getConnectPoint();
+        var keep = true;
+        var path = new _path_js__WEBPACK_IMPORTED_MODULE_2__["Path"](graph, _utils_js__WEBPACK_IMPORTED_MODULE_1__["default"].defautlLineGenerator);
+        path.init();
+        graph.on('mousemove', function () {
+          d3__WEBPACK_IMPORTED_MODULE_3__["event"].stopPropagation();
+
+          if (keep) {
+            var endPoint = d3__WEBPACK_IMPORTED_MODULE_3__["mouse"](this);
+            path.updateConnectPoint(startPoint, endPoint);
+          }
+        });
+        graph.on('mouseup', function () {
+          d3__WEBPACK_IMPORTED_MODULE_3__["event"].stopPropagation();
+          var mousePos = {
+            x: d3__WEBPACK_IMPORTED_MODULE_3__["event"].x,
+            y: d3__WEBPACK_IMPORTED_MODULE_3__["event"].y
+          };
+          var elems = _utils_js__WEBPACK_IMPORTED_MODULE_1__["default"].elementsAt(mousePos.x, mousePos.y);
+          var inPort = _utils_js__WEBPACK_IMPORTED_MODULE_1__["default"].getInPortFromPoint(elems, graph);
+
+          if (inPort != null && outPort.allowConnected(inPort) && inPort.allowConnected(outPort)) {
+            _utils_js__WEBPACK_IMPORTED_MODULE_1__["default"].connectTwoPort(inPort, outPort, path);
+            path.addMarkerEnd();
+            outPort.update();
+            inPort.hide();
+          } else {
+            if (path != null) {
+              path.remove();
+            }
+
+            inPort.show();
+          }
+
+          graph.unHighlight();
+          keep = null;
+          path = null;
+        });
+      });
+    }
+  }, {
+    key: "allowConnected",
+    value: function allowConnected(port) {
+      return this.connected == false && port.portType == Port.CONSTRAINT_IN && this.constraint === port.constraint;
+    }
+  }, {
+    key: "allow",
+    value: function allow() {
+      this.style('r', '5');
+      this.style('fill', 'green');
+    }
+  }, {
+    key: "forbid",
+    value: function forbid() {
+      this.style('r', '5');
+      this.style('fill', 'red');
+    }
+  }, {
+    key: "origin",
+    value: function origin() {
+      this.style('y', '7');
+      this.style('fill', '#FFFFFF');
+    }
   }]);
 
   return ConstraintOutPort;
@@ -30412,6 +30722,12 @@ function () {
       subElement.d3Inst = this.d3Inst.append(subElement.markup);
       return subElement.d3Inst;
     }
+  }, {
+    key: "highlight",
+    value: function highlight() {}
+  }, {
+    key: "unHighlight",
+    value: function unHighlight() {}
   }]);
 
   return Shape;
@@ -30430,6 +30746,18 @@ function (_Shape) {
     _this.markup = 'rect';
     return _this;
   }
+
+  _createClass(Rect, [{
+    key: "highlight",
+    value: function highlight() {
+      this.attr('class', 'DefaultHighlightRect');
+    }
+  }, {
+    key: "unHighlight",
+    value: function unHighlight() {
+      this.attr('class', 'DefaultRect');
+    }
+  }]);
 
   return Rect;
 }(Shape);
@@ -30475,6 +30803,18 @@ function (_Shape3) {
 
       this.d3Inst = this.containerShape.append(this);
       this.attr('id', this.id);
+    }
+  }, {
+    key: "highlight",
+    value: function highlight() {
+      this.style('stroke-dasharray', '5 3');
+      this.style('stroke', '#82B53A');
+    }
+  }, {
+    key: "unHighlight",
+    value: function unHighlight() {
+      this.style('stroke-dasharray', null);
+      this.style('stroke', '#BCBCBC');
     }
   }]);
 

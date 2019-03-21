@@ -4,6 +4,15 @@ This is a javascript file which can create and manipulate the svg object. The fi
 
 You can creat object like this:
 
+
+## Compile
+
+	npm run build
+
+## import js to your html
+
+	<script src="dist/spotlight.js"></script>
+
 ### step 1. create graph object:
 
 	let graph = new Graph('svg'); // the 'svg' means markup in the html

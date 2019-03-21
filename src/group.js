@@ -1,6 +1,6 @@
 import {Shape, SubShape} from './shape.js';
 import SpotlightType from './spotlight_type.js';
-import {Port, InPort, OutPort} from './port.js';
+import {Port, InPort, OutPort, ConstraintInPort, ConstraintOutPort} from './port.js';
 import * as d3 from 'd3';
 
 export class Group extends Shape {
@@ -9,6 +9,22 @@ export class Group extends Shape {
         this.graph = graph;
         this.markup = 'g';
         this.type = SpotlightType.GROUP;
+    }
+
+    highlight() {
+        this.body.highlight();
+    }
+
+    unHighlight() {
+        this.body.unHighlight();
+    }
+
+    highlightWithContraint() {
+
+    }
+
+    unHighlightWigthConstraint() {
+
     }
 }
 
@@ -39,6 +55,8 @@ export class ExampleGroup extends Group {
         this.body.init();
         this.textBody.init();
         this.text.init();
+        this.text.attr('x', '84');
+        this.text.attr('y', '31');
 
         this.graph.registElement(this.body);
         this.graph.registElement(this.textBody);
@@ -66,6 +84,23 @@ export class ExampleGroup extends Group {
         this.__registPort(port);
         this.__updatePort();
     }
+
+    addConstraintInPort(constraint) {
+        let port = new ConstraintInPort(this, constraint);
+        port.init();
+        port.attr('class', 'DefaultInPort');
+        this.__registPort(port);
+        this.__updatePort();
+    }
+
+    addConstraintOutPort(constraint) {
+        let port = new ConstraintOutPort(this, constraint);
+        port.init();
+        port.attr('class', 'DefaultOutPort');
+        this.__registPort(port);
+        this.__updatePort();
+    }
+
 
     drag() {
         let mousePos = null;
@@ -99,6 +134,60 @@ export class ExampleGroup extends Group {
 
         this.d3Inst.call(drag);
     }
+    
+    displayText(displayText) {
+        this.text.d3Inst.text(displayText);
+    }
+
+    highlightWithContraint(port) {
+        let highlightCnt = 0;
+        if (port.portType === Port.CONSTRAINT_IN) {
+            for (let key in this.outPorts) {
+                let outPort = this.outPorts[key];
+                if (outPort.portType === Port.CONSTRAINT_OUT) {
+                    if (outPort.allowConnected(port)) {
+                        outPort.allow();
+                        highlightCnt = highlightCnt + 1;
+                    } else {
+                        outPort.forbid();
+                    }
+                }
+            }
+        } else if (port.portType === Port.CONSTRAINT_OUT) {
+            for (let key in this.inPorts) {
+                let inPort = this.inPorts[key];
+                if (inPort.portType === Port.CONSTRAINT_IN) {
+                    if (inPort.allowConnected(port)) {
+                        highlightCnt = highlightCnt + 1;
+                        inPort.allow();
+                    } else {
+                        inPort.forbid();
+                    }
+                }
+            }
+        }
+
+        if (highlightCnt) {
+            this.body.highlight();
+        }
+    }  
+
+    unHighlightWigthConstraint() {
+        this.body.unHighlight();
+        for (let key in this.inPorts) {
+            let inPort = this.inPorts[key];
+            if (inPort.portType = Port.CONSTRAINT_IN) {
+                inPort.origin();
+            }
+        }
+
+        for (let key in this.outPorts) {
+            let outPort = this.outPorts[key];
+            if (outPort.portType = Port.CONSTRAINT_OUT) {
+                outPort.origin();
+            }
+        }
+    }
 
     __updatePort() {
         let split = Object.keys(this.inPorts).length;
@@ -115,6 +204,11 @@ export class ExampleGroup extends Group {
         }
 
         split = Object.keys(this.outPorts).length;
+
+        if (split <= 1) {
+            return ;
+        }
+
         i = 1;
         for (let key in this.outPorts) {
             this.outPorts[key].style('cx', pos * i);

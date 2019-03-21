@@ -55,8 +55,7 @@ export class Port {
         this.d3Inst.on(event, func);
     }
 
-    allowConnected() {
-        return this.connected == false;
+    allowConnected(port) {
     }
 
     attr(key, value) {
@@ -115,10 +114,8 @@ export class InPort extends Port {
 
                 let elems = Utils.elementsAt(mousePos.x, mousePos.y);
                 let outPort = Utils.getOutPortFromPoint(elems, graph);
-                if (outPort != null && outPort.allowConnected() && inPort.allowConnected()) {
+                if (outPort != null && outPort.allowConnected(inPort) && inPort.allowConnected(outPort)) {
                     Utils.connectTwoPort(inPort, outPort, path);
-                    path.addMarkerEnd();
-                    inPort.hide();
                     outPort.update();
                 } else {
                     if (path != null) {
@@ -139,6 +136,10 @@ export class InPort extends Port {
         portCoord.y = this.group.body.node().getBoundingClientRect().y;
         let temp = Utils.coordinateTransform(this.group.graph, portCoord);
         return [temp.x, temp.y];
+    }
+
+    allowConnected(port) {
+        return this.connected == false && port.portType === Port.OUT;
     }
 }
 
@@ -176,7 +177,7 @@ export class OutPort extends Port {
                 let elems = Utils.elementsAt(mousePos.x, mousePos.y);
                 let inPort = Utils.getInPortFromPoint(elems, graph);
 
-                if (inPort != null && inPort.allowConnected() && outPort.allowConnected()) {
+                if (inPort != null && inPort.allowConnected(inPort) && outPort.allowConnected(inPort)) {
                     Utils.connectTwoPort(inPort, outPort, path);
                     path.addMarkerEnd();
                     inPort.hide();
@@ -212,6 +213,10 @@ export class OutPort extends Port {
             this.path.update();
         }
     }
+
+    allowConnected(port) {
+        return this.connected == false && port.portType === Port.IN;
+    }
 }
 
 export class ConstraintInPort extends InPort {
@@ -222,16 +227,142 @@ export class ConstraintInPort extends InPort {
     }
 
     connect() {
+        let inPort = this;
+        this.d3Inst.on('mousedown', function() {
+            d3.event.stopPropagation();
+            let group = inPort.group;
+            let graph = group.graph;
+            graph.highlightWithConstraint(group, inPort);
+            let endPoint = inPort.getConnectPoint();
+            let keep = true;
+            let path = new Path(graph, Utils.defautlLineGenerator);
+            path.init();
+            path.addMarkerEnd();
+            inPort.hide();
 
+            graph.on('mousemove', function () {
+                d3.event.stopPropagation();
+                if (keep) {
+                    let startPoint = d3.mouse(this);
+                    path.updateConnectPoint(startPoint, endPoint);
+                }
+            });
+
+            graph.on('mouseup', function () {
+                d3.event.stopPropagation();
+                let mousePos = {
+                    x: d3.event.x,
+                    y: d3.event.y
+                };
+
+                let elems = Utils.elementsAt(mousePos.x, mousePos.y);
+                let outPort = Utils.getOutPortFromPoint(elems, graph);
+                if (outPort != null && outPort.allowConnected(inPort) && inPort.allowConnected(outPort)) {
+                    Utils.connectTwoPort(inPort, outPort, path);
+                    outPort.update();
+                } else {
+                    if (path != null) {
+                        path.remove();
+                    }
+                    inPort.show();
+                }
+                graph.unHighlight();
+                keep = null;
+                path = null;
+            });
+        });
+    }
+
+    allowConnected(port) {
+        return this.connected == false && port.portType == Port.CONSTRAINT_OUT && this.constraint === port.constraint;
+    }
+
+    allow() {
+        this.style('r', '5');
+        this.style('fill', 'green');
+    }
+
+    forbid() {
+        this.style('r', '5');
+        this.style('fill', 'red');
+    }
+
+    origin() {
+        this.style('y', '7');
+        this.style('fill', '#FFFFFF');
     }
 }
 
 export class ConstraintOutPort extends OutPort {
-    constructor(group) {
+    constructor(group, constraint) {
         super(group);
         this.portType = Port.CONSTRAINT_OUT;
+        this.constraint = constraint;
     }
 
     connect() {
+        let outPort = this;
+        this.d3Inst.on('mousedown', function() {
+            d3.event.stopPropagation();
+            let group = outPort.group;
+            let graph = group.graph;
+            graph.highlightWithConstraint(group, outPort);
+            let startPoint = outPort.getConnectPoint();
+            let keep = true;
+            let path = new Path(graph, Utils.defautlLineGenerator);
+            path.init();
+
+            graph.on('mousemove', function () {
+                d3.event.stopPropagation();
+                if (keep) {
+                    let endPoint = d3.mouse(this);
+                    path.updateConnectPoint(startPoint, endPoint);
+                }
+            });
+
+            graph.on('mouseup', function () {
+                d3.event.stopPropagation();
+                let mousePos = {
+                    x: d3.event.x,
+                    y: d3.event.y
+                };
+
+                let elems = Utils.elementsAt(mousePos.x, mousePos.y);
+                let inPort = Utils.getInPortFromPoint(elems, graph);
+                if (inPort != null && outPort.allowConnected(inPort) && inPort.allowConnected(outPort)) {
+                    Utils.connectTwoPort(inPort, outPort, path);
+                    path.addMarkerEnd();
+                    outPort.update();
+                    inPort.hide();
+                } else {
+                    if (path != null) {
+                        path.remove();
+                    }
+                    inPort.show();
+                }
+                graph.unHighlight();
+                keep = null;
+                path = null;
+            });
+        });
+    }
+
+    allowConnected(port) {
+        return this.connected == false && port.portType == Port.CONSTRAINT_IN && this.constraint === port.constraint;
+    }
+
+    allow() {
+        this.style('r', '5');
+        this.style('fill', 'green');
+    }
+
+    forbid() {
+        this.style('r', '5');
+        this.style('fill', 'red');
+    }
+
+    origin() {
+        this.style('y', '7');
+        this.style('fill', '#FFFFFF');
     }
 }

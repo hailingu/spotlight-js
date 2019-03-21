@@ -69,12 +69,26 @@ export class Shape {
         subElement.d3Inst = this.d3Inst.append(subElement.markup);
         return subElement.d3Inst;
     }
+
+    highlight() {
+    }
+
+    unHighlight() {
+    }
 }
 
 export class Rect extends Shape {
     constructor(graph) {
         super(graph);
         this.markup = 'rect';
+    }
+
+    highlight() {
+        this.attr('class', 'DefaultHighlightRect');
+    }
+
+    unHighlight() {
+        this.attr('class', 'DefaultRect');
     }
 }
 
@@ -90,6 +104,7 @@ export class SubShape extends Shape {
         super(null);
         this.markup = markup;
         this.containerShape = containerShape;
+        
     }
 
     init () {
@@ -99,5 +114,15 @@ export class SubShape extends Shape {
 
         this.d3Inst = this.containerShape.append(this);
         this.attr('id', this.id);
+    }
+
+    highlight() {
+        this.style('stroke-dasharray', '5 3');
+        this.style('stroke', '#82B53A');
+    }
+
+    unHighlight() {
+        this.style('stroke-dasharray', null);
+        this.style('stroke', '#BCBCBC');
     }
 }

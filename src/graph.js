@@ -53,20 +53,46 @@ export default class Graph {
         element.remove();
     }
 
-    hightlightElement() {
+    hightlight(element) {
+        for (let key in this.context.group) {
+            if (element.id === key) {
+                continue;
+            }
 
+            this.context.group[key].hightlight();
+        }
+
+        for (let key in this.context.shape) {
+            if (element.id === key) {
+                continue;
+            }
+
+            this.context.shape[key].hightlight();
+        }
     }
 
-    unHighlightElement() {
-        
+    unHighlight() {
+        for (let key in this.context.group) {
+            this.context.group[key].unHighlight();
+        }
+
+        for (let key in this.context.shape) {
+           let shape = this.context.shape[key];
+           if (shape.graph == null) {
+               continue;
+           }
+           shape.unHighlight();
+        }
     }
 
-    highlightElementWithConstraint() {
+    highlightWithConstraint(element, port) {
+        for (let key in this.context.group) {
+            if (element.id === key) {
+                continue;
+            }
 
-    }
-
-    unHighlightElementWithConstraint() {
-        
+            this.context.group[key].highlightWithContraint(port);
+        }
     }
     
     elementExist(element) {

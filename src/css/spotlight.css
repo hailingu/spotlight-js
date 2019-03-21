@@ -16,15 +16,13 @@
 }
 
 .DefaultTextBody {
-	font-family: Helvetica;
-	font-size: 15;
-	font-weight: normal;
-	fill: #000000;
+    font-size: 15;
 }
 
 .DefaultTextSpan {
-    x: 84;
-    y: 31;
+	font-family: Helvetica;
+	font-weight: normal;
+    fill: #000000;
 }
 
 g rect:hover {
@@ -63,4 +61,21 @@ g rect:hover {
     refY: 7;
     orient: auto;
     fill: #808080;
+}
+
+
+.DefaultHighlightRect {
+    width: 281px;
+    height: 51px;
+    fill:#FFFFFF;
+    x: 0;
+    y: 0;
+    rx: 10;
+    stroke-linejoin: round;
+    stroke-dasharray: 5 3;
+    stroke: #82B53A;
+}
+
+svg {
+    user-select: none;
 }
