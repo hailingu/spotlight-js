@@ -115,19 +115,19 @@ export class ExampleGroup extends Group {
             current.attr("transform", "translate(" + (x - mousePos[0]) + "," + (y - mousePos[1]) + ")");
 
             for (let i in current.inPorts) {
-                let path = current.inPorts[i].path;
-                if (path != null) {
-                    path.update();
+                let pathList = current.inPorts[i].path;
+                for (let j in pathList) {
+                    pathList[j].update();
                 }
             }
 
+
             for (let i in current.outPorts) {
-                let path = current.outPorts[i].path;
-                if (path != null) {
-                    path.update();
+                let pathList = current.outPorts[i].path;
+                for (let j in pathList) {
+                    pathList[j].update();
                 }
             }
-    
         }).on('end', function () {
             mousePos = null;
         });

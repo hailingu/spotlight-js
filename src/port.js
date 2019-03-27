@@ -28,7 +28,7 @@ export class Port {
         this.markup = null;
         this.markup = 'circle';
         this.id = Utils.randomID();
-        this.path = null;
+        this.path = [];
         this.connected = false;
     }
 
@@ -209,13 +209,13 @@ export class OutPort extends Port {
     }
 
     __updateOutPortConnection() {
-        if (this.path != null) {
-            this.path.update();
+        for (let j in this.path) {
+            this.path[j].update();
         }
     }
 
     allowConnected(port) {
-        return this.connected == false && port.portType === Port.IN;
+        return port.portType === Port.IN;
     }
 }
 
@@ -348,7 +348,7 @@ export class ConstraintOutPort extends OutPort {
     }
 
     allowConnected(port) {
-        return this.connected == false && port.portType == Port.CONSTRAINT_IN && this.constraint === port.constraint;
+        return port.portType == Port.CONSTRAINT_IN && this.constraint === port.constraint;
     }
 
     allow() {

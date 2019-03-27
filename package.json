@@ -4,17 +4,17 @@
   "description": "This is a javascript file which can create and manipulate the svg object. The file is based on d3.js.",
   "main": "src/index.js",
   "dependencies": {
-    "d3": "^5.9.2",
-    "d3.js": "0.0.2-security",
-    "webpack-cli": "^3.3.0"
+    "d3": "^5.9.2"
   },
   "devDependencies": {
-    "@babel/core": "^7.3.4",
-    "@babel/preset-env": "^7.3.4",
+    "@babel/core": "^7.4.0",
+    "@babel/preset-env": "^7.4.2",
     "babel-loader": "^8.0.5",
     "css-loader": "^2.1.1",
+    "d3.js": "0.0.2-security",
     "style-loader": "^0.23.1",
-    "webpack": "^4.29.6"
+    "webpack": "^4.29.6",
+    "webpack-cli": "^3.3.0"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",

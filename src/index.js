@@ -27,6 +27,14 @@ example3.addOutPort();
 example3.drag();
 example3.displayText('example3');
 
+let example4 = new ExampleGroup(graph);
+example4.init();
+example4.addInPort();
+example4.addOutPort();
+example4.addConstraintOutPort('data');
+example4.drag();
+example4.displayText('example4');
+
 let arrow = new Arrow(graph);
 
 console.log(graph);

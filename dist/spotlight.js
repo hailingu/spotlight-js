@@ -95,7 +95,7 @@
 
 exports = module.exports = __webpack_require__(/*! ../../node_modules/css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js")(false);
 // Module
-exports.push([module.i, ".ExampleGroup {\n\tstroke-width: 1;\n    fill: none;\n    transform: 'translate(20,20)';\n}\n\n.DefaultRect {\n    width: 281px;\n    height: 51px;\n    fill:#FFFFFF;\n    stroke: #BCBCBC;\n    x: 0;\n    y: 0;\n    rx: 10;\n    stroke-linejoin: round;\n}\n\n.DefaultTextBody {\n    font-size: 15;\n}\n\n.DefaultTextSpan {\n\tfont-family: Helvetica;\n\tfont-weight: normal;\n    fill: #000000;\n}\n\ng rect:hover {\n\tstroke-width: 3;\n\tstroke: #808080;\n}\n\n.DefaultInPort {\n    stroke: #BCBCBC;\n    fill: #FFFFFF;\n    cx: 140.5;\n    cy: 0;\n    r: 7;\n}\n\n.DefaultOutPort {\n    stroke: #BCBCBC;\n    fill: #FFFFFF;\n    cx: 140.5;\n    cy: 51;\n    r: 7;\n}\n\n.DefaultPath {\n    stroke: #808080;\n    stroke-width: 1px;\n    fill: none;\n}\n\n.DefaultArrow {\n    markerWidth: 14px;\n    markerheight: 14px;\n    markerUnits: strokeWidth;\n    viewBox: 0 0 14 14;\n    refX: 2;\n    refY: 7;\n    orient: auto;\n    fill: #808080;\n}\n\n\n.DefaultHighlightRect {\n    width: 281px;\n    height: 51px;\n    fill:#FFFFFF;\n    x: 0;\n    y: 0;\n    rx: 10;\n    stroke-linejoin: round;\n    stroke-dasharray: 5 3;\n    stroke: #82B53A;\n}\n\nsvg {\n    user-select: none;\n}", ""]);
+exports.push([module.i, ".ExampleGroup {\r\n\tstroke-width: 1;\r\n    fill: none;\r\n    transform: 'translate(20,20)';\r\n}\r\n\r\n.DefaultRect {\r\n    width: 281px;\r\n    height: 51px;\r\n    fill:#FFFFFF;\r\n    stroke: #BCBCBC;\r\n    x: 0;\r\n    y: 0;\r\n    rx: 10;\r\n    stroke-linejoin: round;\r\n}\r\n\r\n.DefaultTextBody {\r\n    font-size: 15;\r\n}\r\n\r\n.DefaultTextSpan {\r\n\tfont-family: Helvetica;\r\n\tfont-weight: normal;\r\n    fill: #000000;\r\n}\r\n\r\ng rect:hover {\r\n\tstroke-width: 3;\r\n\tstroke: #808080;\r\n}\r\n\r\n.DefaultInPort {\r\n    stroke: #BCBCBC;\r\n    fill: #FFFFFF;\r\n    cx: 140.5;\r\n    cy: 0;\r\n    r: 7;\r\n}\r\n\r\n.DefaultOutPort {\r\n    stroke: #BCBCBC;\r\n    fill: #FFFFFF;\r\n    cx: 140.5;\r\n    cy: 51;\r\n    r: 7;\r\n}\r\n\r\n.DefaultPath {\r\n    stroke: #808080;\r\n    stroke-width: 1px;\r\n    fill: none;\r\n}\r\n\r\n.DefaultArrow {\r\n    markerWidth: 14px;\r\n    markerheight: 14px;\r\n    markerUnits: strokeWidth;\r\n    viewBox: 0 0 14 14;\r\n    refX: 2;\r\n    refY: 7;\r\n    orient: auto;\r\n    fill: #808080;\r\n}\r\n\r\n\r\n.DefaultHighlightRect {\r\n    width: 281px;\r\n    height: 51px;\r\n    fill:#FFFFFF;\r\n    x: 0;\r\n    y: 0;\r\n    rx: 10;\r\n    stroke-linejoin: round;\r\n    stroke-dasharray: 5 3;\r\n    stroke: #82B53A;\r\n}\r\n\r\nsvg {\r\n    user-select: none;\r\n}", ""]);
 
 
 
@@ -22148,7 +22148,7 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ __webpack_exports__["default"] = (function (series, order) {
-  if (!((n = series.length) > 1)) return;
+  if (!((n = series.length) > 0)) return;
 
   for (var i, j = 0, d, dy, yp, yn, n, m = series[order[0]].length; j < m; ++j) {
     for (yp = yn = 0, i = 0; i < n; ++i) {
@@ -29875,18 +29875,21 @@ function (_Group) {
         current.attr("transform", "translate(" + (x - mousePos[0]) + "," + (y - mousePos[1]) + ")");
 
         for (var i in current.inPorts) {
-          var path = current.inPorts[i].path;
+          var pathList = current.inPorts[i].path;
 
-          if (path != null) {
-            path.update();
+          for (var j in pathList) {
+            console.log(pathList[j]);
+            pathList[j].update();
           }
         }
 
         for (var _i in current.outPorts) {
-          var _path = current.outPorts[_i].path;
+          var _pathList = current.outPorts[_i].path;
 
-          if (_path != null) {
-            _path.update();
+          for (var _j in _pathList) {
+            console.log(_pathList[_j]);
+
+            _pathList[_j].update();
           }
         }
       }).on('end', function () {
@@ -30056,6 +30059,13 @@ example3.addConstraintInPort('model');
 example3.addOutPort();
 example3.drag();
 example3.displayText('example3');
+var example4 = new _group_js__WEBPACK_IMPORTED_MODULE_1__["ExampleGroup"](graph);
+example4.init();
+example4.addInPort();
+example4.addOutPort();
+example4.addConstraintOutPort('data');
+example4.drag();
+example4.displayText('example4');
 var arrow = new _arrow_js__WEBPACK_IMPORTED_MODULE_4__["Arrow"](graph);
 console.log(graph);
 console.log(example2);
@@ -30229,7 +30239,7 @@ function () {
     this.markup = null;
     this.markup = 'circle';
     this.id = _utils_js__WEBPACK_IMPORTED_MODULE_1__["default"].randomID();
-    this.path = null;
+    this.path = [];
     this.connected = false;
   }
 
@@ -30451,14 +30461,14 @@ function (_Port2) {
   }, {
     key: "__updateOutPortConnection",
     value: function __updateOutPortConnection() {
-      if (this.path != null) {
-        this.path.update();
+      for (var j in this.path) {
+        this.path[j].update();
       }
     }
   }, {
     key: "allowConnected",
     value: function allowConnected(port) {
-      return this.connected == false && port.portType === Port.IN;
+      return port.portType === Port.IN;
     }
   }]);
 
@@ -30624,7 +30634,7 @@ function (_OutPort) {
   }, {
     key: "allowConnected",
     value: function allowConnected(port) {
-      return this.connected == false && port.portType == Port.CONSTRAINT_IN && this.constraint === port.constraint;
+      return port.portType == Port.CONSTRAINT_IN && this.constraint === port.constraint;
     }
   }, {
     key: "allow",
@@ -30996,8 +31006,8 @@ var connectLineGeneratorHelp = function connectLineGeneratorHelp(startPoint, end
 };
 
 var connectTwoPort = function connectTwoPort(inPort, outPort, path) {
-  inPort.path = path;
-  outPort.path = path;
+  inPort.path.push(path);
+  outPort.path.push(path);
   path.inPort = inPort;
   path.outPort = outPort;
   inPort.connected = true;
