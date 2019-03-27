@@ -191,28 +191,24 @@ export class ExampleGroup extends Group {
 
     __updatePort() {
         let split = Object.keys(this.inPorts).length;
-
-        if (split <= 1) {
-            return ;
-        }
-
         let pos = parseInt(this.body.d3Inst.style('width')) / (split + 1);
         let i = 1;
-        for (let key in this.inPorts) {
-            this.inPorts[key].style('cx', pos * i);
-            i = i + 1;
-        }
 
+        if (split > 1) {
+            for (let key in this.inPorts) {
+                this.inPorts[key].style('cx', pos * i);
+                i = i + 1;
+            }
+        }
+ 
         split = Object.keys(this.outPorts).length;
-
-        if (split <= 1) {
-            return ;
-        }
-
-        i = 1;
-        for (let key in this.outPorts) {
-            this.outPorts[key].style('cx', pos * i);
-            i = i + 1;
+        pos = parseInt(this.body.d3Inst.style('width')) / (split + 1);
+        if (split > 1) {
+            i = 1;
+            for (let key in this.outPorts) {
+                this.outPorts[key].style('cx', pos * i);
+                i = i + 1;
+            }
         }
     }
 

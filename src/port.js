@@ -121,6 +121,7 @@ export class InPort extends Port {
                     if (path != null) {
                         path.remove();
                     }
+
                     inPort.show();
                 }
 
@@ -288,7 +289,7 @@ export class ConstraintInPort extends InPort {
     }
 
     origin() {
-        this.style('y', '7');
+        this.style('r', '7');
         this.style('fill', '#FFFFFF');
     }
 }
@@ -338,7 +339,11 @@ export class ConstraintOutPort extends OutPort {
                     if (path != null) {
                         path.remove();
                     }
-                    inPort.show();
+
+                    if (inPort != null) {
+                        inPort.show();
+                    }
+                    
                 }
                 graph.unHighlightWithConstraint();
                 keep = null;
@@ -362,7 +367,7 @@ export class ConstraintOutPort extends OutPort {
     }
 
     origin() {
-        this.style('y', '7');
+        this.style('r', '7');
         this.style('fill', '#FFFFFF');
     }
 }

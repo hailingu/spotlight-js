@@ -29878,7 +29878,6 @@ function (_Group) {
           var pathList = current.inPorts[i].path;
 
           for (var j in pathList) {
-            console.log(pathList[j]);
             pathList[j].update();
           }
         }
@@ -29887,8 +29886,6 @@ function (_Group) {
           var _pathList = current.outPorts[_i].path;
 
           for (var _j in _pathList) {
-            console.log(_pathList[_j]);
-
             _pathList[_j].update();
           }
         }
@@ -29964,31 +29961,27 @@ function (_Group) {
     key: "__updatePort",
     value: function __updatePort() {
       var split = Object.keys(this.inPorts).length;
-
-      if (split <= 1) {
-        return;
-      }
-
       var pos = parseInt(this.body.d3Inst.style('width')) / (split + 1);
       var i = 1;
 
-      for (var key in this.inPorts) {
-        this.inPorts[key].style('cx', pos * i);
-        i = i + 1;
+      if (split > 1) {
+        for (var key in this.inPorts) {
+          this.inPorts[key].style('cx', pos * i);
+          i = i + 1;
+        }
       }
 
       split = Object.keys(this.outPorts).length;
+      pos = parseInt(this.body.d3Inst.style('width')) / (split + 1);
 
-      if (split <= 1) {
-        return;
-      }
+      if (split > 1) {
+        i = 1;
 
-      i = 1;
+        for (var _key3 in this.outPorts) {
+          this.outPorts[_key3].style('cx', pos * i);
 
-      for (var _key3 in this.outPorts) {
-        this.outPorts[_key3].style('cx', pos * i);
-
-        i = i + 1;
+          i = i + 1;
+        }
       }
     }
   }, {
@@ -30070,6 +30063,7 @@ var arrow = new _arrow_js__WEBPACK_IMPORTED_MODULE_4__["Arrow"](graph);
 console.log(graph);
 console.log(example2);
 console.log(example3);
+console.log(example4);
 
 /***/ }),
 
@@ -30559,7 +30553,7 @@ function (_InPort) {
   }, {
     key: "origin",
     value: function origin() {
-      this.style('y', '7');
+      this.style('r', '7');
       this.style('fill', '#FFFFFF');
     }
   }]);
@@ -30622,7 +30616,9 @@ function (_OutPort) {
               path.remove();
             }
 
-            inPort.show();
+            if (inPort != null) {
+              inPort.show();
+            }
           }
 
           graph.unHighlightWithConstraint();
@@ -30651,7 +30647,7 @@ function (_OutPort) {
   }, {
     key: "origin",
     value: function origin() {
-      this.style('y', '7');
+      this.style('r', '7');
       this.style('fill', '#FFFFFF');
     }
   }]);

@@ -40,3 +40,4 @@ let arrow = new Arrow(graph);
 console.log(graph);
 console.log(example2);
 console.log(example3);
+console.log(example4);
