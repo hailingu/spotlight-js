@@ -41,3 +41,16 @@ console.log(graph);
 console.log(example2);
 console.log(example3);
 console.log(example4);
+
+window.oncontextmenu = function(e){
+    e.preventDefault();
+    let menu=document.querySelector("#menu");
+    menu.style.left = e.clientX+'px';
+    menu.style.top = e.clientY+'px';
+    menu.style.width = '125px';
+    document.querySelector('#menu').style.height = '25px';
+}
+
+window.onclick = function(e){
+    document.querySelector('#menu').style.height=0;
+}

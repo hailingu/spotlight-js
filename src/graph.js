@@ -91,7 +91,7 @@ export default class Graph {
                 continue;
             }
 
-            this.context.group[key].highlightWithContraint(port);
+            this.context.group[key].highlightWithConstraint(port);
         }
     }
 
