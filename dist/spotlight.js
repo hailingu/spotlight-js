@@ -95,7 +95,7 @@
 
 exports = module.exports = __webpack_require__(/*! ../../node_modules/css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js")(false);
 // Module
-exports.push([module.i, ".ExampleGroup {\r\n\tstroke-width: 1;\r\n    fill: none;\r\n    transform: 'translate(20,20)';\r\n}\r\n\r\n.DefaultRect {\r\n    width: 281px;\r\n    height: 51px;\r\n    fill:#FFFFFF;\r\n    stroke: #BCBCBC;\r\n    x: 0;\r\n    y: 0;\r\n    rx: 10;\r\n    stroke-linejoin: round;\r\n}\r\n\r\n.DefaultTextBody {\r\n    font-size: 15;\r\n}\r\n\r\n.DefaultTextSpan {\r\n\tfont-family: Helvetica;\r\n\tfont-weight: normal;\r\n    fill: #000000;\r\n}\r\n\r\ng rect:hover {\r\n\tstroke-width: 3;\r\n\tstroke: #808080;\r\n}\r\n\r\n.DefaultInPort {\r\n    stroke: #BCBCBC;\r\n    fill: #FFFFFF;\r\n    cx: 140.5;\r\n    cy: 0;\r\n    r: 7;\r\n}\r\n\r\n.DefaultOutPort {\r\n    stroke: #BCBCBC;\r\n    fill: #FFFFFF;\r\n    cx: 140.5;\r\n    cy: 51;\r\n    r: 7;\r\n}\r\n\r\n.DefaultPath {\r\n    stroke: #808080;\r\n    stroke-width: 1px;\r\n    fill: none;\r\n}\r\n\r\n.DefaultArrow {\r\n    markerWidth: 14px;\r\n    markerheight: 14px;\r\n    markerUnits: strokeWidth;\r\n    viewBox: 0 0 14 14;\r\n    refX: 2;\r\n    refY: 7;\r\n    orient: auto;\r\n    fill: #808080;\r\n}\r\n\r\n\r\n.DefaultHighlightRect {\r\n    width: 281px;\r\n    height: 51px;\r\n    fill:#FFFFFF;\r\n    x: 0;\r\n    y: 0;\r\n    rx: 10;\r\n    stroke-linejoin: round;\r\n    stroke-dasharray: 5 3;\r\n    stroke: #82B53A;\r\n}\r\n\r\nsvg {\r\n    user-select: none;\r\n}", ""]);
+exports.push([module.i, ".ExampleGroup {\r\n\tstroke-width: 1;\r\n    fill: none;\r\n    transform: 'translate(20,20)';\r\n}\r\n\r\n.DefaultRect {\r\n    width: 281px;\r\n    height: 51px;\r\n    fill:#FFFFFF;\r\n    stroke: #BCBCBC;\r\n    x: 0;\r\n    y: 0;\r\n    rx: 10;\r\n    stroke-linejoin: round;\r\n}\r\n\r\n.DefaultTextBody {\r\n    font-size: 15;\r\n}\r\n\r\n.DefaultTextSpan {\r\n\tfont-family: Helvetica;\r\n\tfont-weight: normal;\r\n    fill: #000000;\r\n}\r\n\r\ng rect:hover {\r\n\tstroke-width: 3;\r\n\tstroke: #808080;\r\n}\r\n\r\n.DefaultInPort {\r\n    stroke: #BCBCBC;\r\n    fill: #FFFFFF;\r\n    cx: 140.5;\r\n    cy: 0;\r\n    r: 7;\r\n}\r\n\r\n.DefaultOutPort {\r\n    stroke: #BCBCBC;\r\n    fill: #FFFFFF;\r\n    cx: 140.5;\r\n    cy: 51;\r\n    r: 7;\r\n}\r\n\r\n.DefaultPath {\r\n    stroke: #808080;\r\n    stroke-width: 1px;\r\n    fill: none;\r\n}\r\n\r\n.DefaultArrow {\r\n    markerWidth: 14px;\r\n    markerheight: 14px;\r\n    markerUnits: strokeWidth;\r\n    viewBox: 0 0 14 14;\r\n    refX: 2;\r\n    refY: 7;\r\n    orient: auto;\r\n    fill: #808080;\r\n}\r\n\r\n\r\n.DefaultHighlightRect {\r\n    width: 281px;\r\n    height: 51px;\r\n    fill:#FFFFFF;\r\n    x: 0;\r\n    y: 0;\r\n    rx: 10;\r\n    stroke-linejoin: round;\r\n    stroke-dasharray: 5 3;\r\n    stroke: #82B53A;\r\n}\r\n\r\nsvg {\r\n    user-select: none;\r\n}\r\n\r\n#menu{\r\n    width: 0; /*设置为0 隐藏自定义菜单*/\r\n    height: 125px;\r\n    overflow: hidden; /*隐藏溢出的元素*/\r\n    box-shadow: 0 1px 1px #888,1px 0 1px #ccc;\r\n    position: absolute; /*自定义菜单相对与body元素进行定位*/\r\n    text-align: center;\r\n}\r\n\r\n.menu{\r\n    width: 125px;\r\n    height: 25px;\r\n    line-height: 25px;\r\n    padding: 0px;\r\n    background-color: #FFFFFF;   \r\n}\r\n\r\nhr {\r\n    margin-top: 1px;\r\n    margin-bottom: 1px;\r\n}", ""]);
 
 
 
@@ -29556,7 +29556,7 @@ function () {
           continue;
         }
 
-        this.context.group[key].highlightWithContraint(port);
+        this.context.group[key].highlightWithConstraint(port);
       }
     }
   }, {
@@ -29900,8 +29900,8 @@ function (_Group) {
       this.text.d3Inst.text(_displayText);
     }
   }, {
-    key: "highlightWithContraint",
-    value: function highlightWithContraint(port) {
+    key: "highlightWithConstraint",
+    value: function highlightWithConstraint(port) {
       var highlightCnt = 0;
 
       if (port.portType === _port_js__WEBPACK_IMPORTED_MODULE_2__["Port"].CONSTRAINT_IN) {
@@ -29914,6 +29914,7 @@ function (_Group) {
               highlightCnt = highlightCnt + 1;
             } else {
               outPort.forbid();
+              highlightCnt = highlightCnt + 1;
             }
           }
         }
@@ -29927,6 +29928,7 @@ function (_Group) {
               inPort.allow();
             } else {
               inPort.forbid();
+              highlightCnt = highlightCnt + 1;
             }
           }
         }
@@ -30064,6 +30066,19 @@ console.log(graph);
 console.log(example2);
 console.log(example3);
 console.log(example4);
+
+window.oncontextmenu = function (e) {
+  e.preventDefault();
+  var menu = document.querySelector("#menu");
+  menu.style.left = e.clientX + 'px';
+  menu.style.top = e.clientY + 'px';
+  menu.style.width = '125px';
+  document.querySelector('#menu').style.height = '25px';
+};
+
+window.onclick = function (e) {
+  document.querySelector('#menu').style.height = 0;
+};
 
 /***/ }),
 
@@ -30345,6 +30360,7 @@ function (_Port) {
           if (outPort != null && outPort.allowConnected(inPort) && inPort.allowConnected(outPort)) {
             _utils_js__WEBPACK_IMPORTED_MODULE_1__["default"].connectTwoPort(inPort, outPort, path);
             outPort.update();
+            graph.on('mouseup', function () {});
           } else {
             if (path != null) {
               path.remove();
@@ -30519,6 +30535,7 @@ function (_InPort) {
           if (outPort != null && outPort.allowConnected(inPort) && inPort.allowConnected(outPort)) {
             _utils_js__WEBPACK_IMPORTED_MODULE_1__["default"].connectTwoPort(inPort, outPort, path);
             outPort.update();
+            graph.on('mouseup', function () {});
           } else {
             if (path != null) {
               path.remove();

@@ -139,7 +139,7 @@ export class ExampleGroup extends Group {
         this.text.d3Inst.text(displayText);
     }
 
-    highlightWithContraint(port) {
+    highlightWithConstraint(port) {
         let highlightCnt = 0;
         if (port.portType === Port.CONSTRAINT_IN) {
             for (let key in this.outPorts) {
@@ -150,6 +150,7 @@ export class ExampleGroup extends Group {
                         highlightCnt = highlightCnt + 1;
                     } else {
                         outPort.forbid();
+                        highlightCnt = highlightCnt + 1;
                     }
                 }
             }
@@ -162,6 +163,7 @@ export class ExampleGroup extends Group {
                         inPort.allow();
                     } else {
                         inPort.forbid();
+                        highlightCnt = highlightCnt + 1;
                     }
                 }
             }

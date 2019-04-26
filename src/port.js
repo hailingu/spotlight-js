@@ -117,6 +117,7 @@ export class InPort extends Port {
                 if (outPort != null && outPort.allowConnected(inPort) && inPort.allowConnected(outPort)) {
                     Utils.connectTwoPort(inPort, outPort, path);
                     outPort.update();
+                    graph.on('mouseup', function (){});
                 } else {
                     if (path != null) {
                         path.remove();
@@ -261,10 +262,13 @@ export class ConstraintInPort extends InPort {
                 if (outPort != null && outPort.allowConnected(inPort) && inPort.allowConnected(outPort)) {
                     Utils.connectTwoPort(inPort, outPort, path);
                     outPort.update();
+                    graph.on('mouseup', function (){});
                 } else {
                     if (path != null) {
                         path.remove();
                     }
+
+
                     inPort.show();
                 }
                 graph.unHighlightWithConstraint();
